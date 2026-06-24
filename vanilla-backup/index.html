@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#00B5AD" />
+  <meta name="description" content="ServeNow — Get ironing, dry cleaning, shoe repair and more delivered in 15–30 minutes. Your hyperlocal service companion with AI styling." />
+  <title>ServeNow — Instant Personal Care & Home Services</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/marketplace.css" />
+  <link rel="stylesheet" href="css/checkout.css" />
+  <link rel="stylesheet" href="css/ai-style.css" />
+  <link rel="stylesheet" href="css/senior.css" />
+  <link rel="stylesheet" href="css/community.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- ═══════════════════ TOP BAR ═══════════════════ -->
+    <header id="top-bar" class="top-bar">
+      <div class="top-bar-left">
+        <button id="btn-back" class="btn-icon hidden" aria-label="Go back">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </button>
+        <div class="location-strip" id="location-strip" onclick="showLocationModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          <div class="location-text-wrap">
+            <span class="location-label">Deliver to</span>
+            <span class="location-name" id="location-name">Detecting location…</span>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="top-bar-right">
+        <button id="btn-notifications" class="btn-icon" aria-label="Notifications" onclick="showNotifToast()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-dot"></span>
+        </button>
+        <button id="btn-cart" class="btn-icon cart-btn" aria-label="Cart" onclick="toggleCart()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span id="cart-badge" class="cart-badge hidden">0</span>
+        </button>
+        <button id="btn-voice-top" class="btn-icon mic-btn-top hidden" aria-label="Voice Assistant" onclick="startVoiceAssistant()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ═══════════════════ MAIN CONTENT ═══════════════════ -->
+    <main id="main-content" class="main-content">
+      <!-- Dynamic content rendered by JS -->
+      <div class="page-loading">
+        <div class="spinner-ring"></div>
+        <p>Loading ServeNow…</p>
+      </div>
+    </main>
+
+    <!-- ═══════════════════ BOTTOM NAV (Normal Mode) ═══════════════════ -->
+    <nav id="bottom-nav" class="bottom-nav" aria-label="Main navigation">
+      <button class="nav-item active" data-page="home" onclick="App.navigate('home')" id="nav-home">
+        <span class="nav-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </span>
+        <span class="nav-label">Home</span>
+      </button>
+      <button class="nav-item" data-page="orders" onclick="App.navigate('orders')" id="nav-orders">
+        <span class="nav-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </span>
+        <span class="nav-label">Orders</span>
+        <span id="orders-badge" class="orders-badge hidden">1</span>
+      </button>
+      <button class="nav-item nav-item-center" data-page="ai" onclick="App.navigate('ai')" id="nav-ai">
+        <span class="nav-center-bubble">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </span>
+        <span class="nav-label">Style</span>
+      </button>
+      <button class="nav-item" data-page="community" onclick="App.navigate('community')" id="nav-community">
+        <span class="nav-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </span>
+        <span class="nav-label">Community</span>
+      </button>
+      <button class="nav-item" data-page="profile" onclick="App.navigate('profile')" id="nav-profile">
+        <span class="nav-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </span>
+        <span class="nav-label">Profile</span>
+      </button>
+    </nav>
+
+    <!-- ═══════════════════ SENIOR NAV ═══════════════════ -->
+    <nav id="senior-nav" class="senior-nav hidden" aria-label="Senior navigation">
+      <button class="senior-nav-item" onclick="App.navigate('home')" id="senior-nav-order">
+        <span class="senior-nav-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        </span>
+        <span class="senior-nav-label">Order</span>
+      </button>
+      <button class="senior-nav-item" onclick="App.navigate('orders')" id="senior-nav-track">
+        <span class="senior-nav-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </span>
+        <span class="senior-nav-label">Track</span>
+      </button>
+      <button class="senior-nav-item senior-help-nav" onclick="showHelpModal()" id="senior-nav-help">
+        <span class="senior-nav-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.86a16 16 0 0 0 6.24 6.24l.87-.87a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </span>
+        <span class="senior-nav-label">Help</span>
+      </button>
+    </nav>
+
+    <!-- ═══════════════════ VOICE FAB (Senior) ═══════════════════ -->
+    <button id="voice-fab" class="voice-fab hidden" onclick="startVoiceAssistant()" aria-label="Voice Assistant">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"/></svg>
+    </button>
+
+    <!-- ═══════════════════ OVERLAYS & MODALS ═══════════════════ -->
+
+    <!-- Cart Overlay -->
+    <div id="cart-overlay" class="overlay hidden" onclick="toggleCart()"></div>
+
+    <!-- Cart Drawer -->
+    <div id="cart-drawer" class="cart-drawer" aria-label="Shopping cart">
+      <div class="cart-handle"></div>
+      <div id="cart-inner" class="cart-inner">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- Voice Modal -->
+    <div id="voice-overlay" class="overlay hidden" onclick="closeVoiceModal()"></div>
+    <div id="voice-modal" class="voice-modal hidden" role="dialog" aria-label="Voice Assistant">
+      <div class="voice-modal-inner">
+        <div class="voice-avatar">
+          <div class="voice-pulse-ring"></div>
+          <div class="voice-pulse-ring delay-1"></div>
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"/></svg>
+        </div>
+        <div id="voice-status" class="voice-status">Listening…</div>
+        <div id="voice-transcript" class="voice-transcript"></div>
+        <div id="voice-response" class="voice-response hidden"></div>
+        <div class="voice-lang-row">
+          <button class="voice-lang-btn active" onclick="setVoiceLang('en-IN')" id="lang-en">EN</button>
+          <button class="voice-lang-btn" onclick="setVoiceLang('hi-IN')" id="lang-hi">हिं</button>
+        </div>
+        <button class="btn-ghost voice-close" onclick="closeVoiceModal()">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Help Modal (Senior) -->
+    <div id="help-overlay" class="overlay hidden" onclick="closeHelpModal()"></div>
+    <div id="help-modal" class="help-modal hidden" role="dialog" aria-label="Help">
+      <div class="help-modal-inner">
+        <div class="help-icon">📞</div>
+        <h2>Need Help?</h2>
+        <p>A support agent will answer your call immediately.</p>
+        <button class="btn-call" onclick="simulateCall()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.86a16 16 0 0 0 6.24 6.24l.87-.87a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Call Support Now
+        </button>
+        <button class="btn-ghost" onclick="closeHelpModal()">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Location Modal -->
+    <div id="location-overlay" class="overlay hidden" onclick="closeLocationModal()"></div>
+    <div id="location-modal" class="location-modal hidden" role="dialog">
+      <div class="location-modal-inner">
+        <div class="location-modal-header">
+          <h3>Choose Delivery Location</h3>
+          <button class="btn-icon" onclick="closeLocationModal()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <button class="location-detect-btn" onclick="detectLocation()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="9" stroke-dasharray="4 2"/></svg>
+          Use Current Location
+        </button>
+        <div class="saved-addresses">
+          <p class="section-label">Saved Addresses</p>
+          <div class="address-item" onclick="selectAddress('Home — 42, Sector 15, Noida, UP')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <div><strong>Home</strong><span>42, Sector 15, Noida, UP</span></div>
+          </div>
+          <div class="address-item" onclick="selectAddress('Office — DLF Cyber City, Gurugram')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            <div><strong>Office</strong><span>DLF Cyber City, Gurugram</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast hidden"></div>
+
+  </div><!-- #app -->
+
+  <!-- JS (order matters: data → app → features) -->
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/marketplace.js"></script>
+  <script src="js/ai-assistant.js"></script>
+  <script src="js/voice.js"></script>
+  <script src="js/senior.js"></script>
+  <script src="js/community.js"></script>
+</body>
+</html>
