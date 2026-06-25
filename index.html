@@ -1,182 +1,696 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ServeNow Prototype</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#00B5AD" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="description" content="ServeNow — Hyperlocal ironing, dry cleaning, shoe repair & more delivered in 15–30 minutes." />
+  <title>ServeNow — Instant Home Services</title>
 
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <style>
+    /* ═══════════════════════════════════════════
+       ServeNow — Design Tokens & Base Styles
+       ═══════════════════════════════════════════ */
     :root {
-      --brand: #2563eb;
-      --brand-hover: #1d4ed8;
-      --brand-light: #eff6ff;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --bg: #f8fafc;
+      --brand: #00B5AD;
+      --brand-dark: #00918a;
+      --brand-light: #e0f7f6;
+      --brand-xlight: #f0fafa;
+      --accent: #FF6B6B;
+      --text-main: #0D2B2A;
+      --text-muted: #8EABAA;
+      --bg: #F3FAFA;
       --surface: #ffffff;
-      --border: #e2e8f0;
-      --success: #10b981;
-      --radius: 16px;
+      --border: #D9ECEB;
+      --success: #22C55E;
+      --radius: 1rem;
+      --max-w: 37.5rem;
+      --nav-h: 4.25rem;
+      --header-h: 3.625rem;
+      --shadow-sm: 0 2px 8px rgba(0,149,140,0.10);
+      --shadow-brand: 0 8px 24px rgba(0,181,173,0.35);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-    
-    body { background: var(--bg); color: var(--text-main); line-height: 1.5; padding-bottom: 80px; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      line-height: 1.5;
+      overflow-x: hidden;
+      padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px));
+      min-height: 100dvh;
+    }
 
-    /* Header */
+    /* ═══ Header & Auth ═══ */
     header {
-      background: var(--surface); padding: 16px 20px; position: sticky; top: 0; z-index: 100;
-      display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      height: var(--header-h);
+      padding: 0 1rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
     }
-    .logo { font-weight: 800; font-size: 1.5rem; color: var(--brand); letter-spacing: -0.5px; }
-    .auth-btn { background: #333; color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 0.85rem; cursor: pointer; }
-    .user-profile { display: none; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9rem; }
-    .user-profile img { width: 32px; height: 32px; border-radius: 50%; }
+    .logo {
+      font-weight: 800;
+      font-size: 1.35rem;
+      color: var(--brand);
+      letter-spacing: -0.03em;
+      white-space: nowrap;
+    }
+    .auth-section { display: flex; align-items: center; gap: 0.5rem; min-width: 0; }
+    .auth-btn {
+      background: var(--text-main);
+      color: #fff;
+      border: none;
+      padding: 0.45rem 0.875rem;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.78rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+    .auth-btn:hover { opacity: 0.88; }
+    .user-profile {
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      min-width: 0;
+    }
+    .user-profile img {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--brand-light);
+      flex-shrink: 0;
+    }
+    .user-profile span {
+      font-weight: 600;
+      font-size: 0.82rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 7rem;
+    }
+    @media (min-width: 480px) {
+      .user-profile span { max-width: 12rem; }
+    }
 
-    /* Container */
-    .container { max-width: 600px; margin: 0 auto; padding: 16px; }
-    .view { display: none; animation: fadeIn 0.3s ease; }
+    /* ═══ Layout & Views ═══ */
+    .container {
+      width: 100%;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    .view { display: none; animation: fadeIn 0.28s ease; }
     .view.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(0.5rem); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--text-main);
+    }
+    .section-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin: -0.4rem 0 0.75rem;
+    }
 
-    /* Home View Elements */
-    .search-bar { width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border); font-size: 1rem; margin-bottom: 20px; outline: none; background: var(--surface); }
-    .search-bar:focus { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-light); }
-    
-    .section-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; }
-    
-    .service-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
-    .service-card { background: var(--surface); border-radius: var(--radius); padding: 16px; border: 1px solid var(--border); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column; align-items: center; text-align: center; }
+    /* ═══ Home — Search & Service Grid ═══ */
+    .search-bar {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border-radius: 0.75rem;
+      border: 1px solid var(--border);
+      font-size: 0.95rem;
+      margin-bottom: 1.25rem;
+      outline: none;
+      background: var(--surface);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-bar:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px var(--brand-light);
+    }
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    @media (min-width: 480px) {
+      .service-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .service-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 1rem 0.75rem;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: transform 0.18s, box-shadow 0.18s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      min-height: 7.5rem;
+    }
+    .service-card:hover { box-shadow: var(--shadow-sm); }
     .service-card:active { transform: scale(0.96); }
-    .service-icon { font-size: 2.5rem; margin-bottom: 8px; }
-    .service-name { font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; }
-    .service-time { font-size: 0.8rem; color: var(--text-muted); background: var(--brand-light); color: var(--brand); padding: 2px 8px; border-radius: 12px; font-weight: 600; }
+    .service-icon { font-size: 2.25rem; margin-bottom: 0.5rem; line-height: 1; }
+    .service-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.25rem; }
+    .service-time {
+      font-size: 0.72rem;
+      color: var(--brand-dark);
+      background: var(--brand-light);
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+    .service-price {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.35rem;
+    }
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
 
-    /* Map Box */
-    .map-container { width: 100%; height: 200px; background: #e5e7eb; border-radius: var(--radius); overflow: hidden; margin-bottom: 24px; position: relative; }
+    /* ═══ Google Maps (Home) ═══ */
+    .map-container {
+      width: 100%;
+      height: 12.5rem;
+      background: var(--brand-xlight);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 1rem;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+    #home-map { width: 100%; height: 100%; }
+    .map-fallback {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .provider-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .provider-chip {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.3rem 0.6rem;
+      border-radius: 999px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+    }
 
-    /* Orders View Elements */
-    .live-order-card { background: linear-gradient(135deg, var(--brand), #4338ca); color: white; border-radius: var(--radius); padding: 20px; margin-bottom: 24px; box-shadow: 0 10px 25px rgba(37,99,235,0.3); }
-    .live-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 0.85rem; font-weight: 600; }
-    .live-badge { background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px; }
-    .pulse-dot { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(74, 222, 128, 0); } 100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); } }
-    .live-eta { font-size: 2.5rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; margin-bottom: 4px; }
-    
-    .history-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 12px; }
-    .history-header { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); }
+    /* ═══ How It Works ═══ */
+    .how-it-works {
+      margin-top: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .how-steps {
+      display: grid;
+      gap: 0.75rem;
+    }
+    .how-step {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.875rem 1rem;
+    }
+    .how-step-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .how-step-text {
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--text-main);
+    }
+
+    /* ═══ Orders — Live Card & History ═══ */
+    .live-order-card {
+      background: linear-gradient(135deg, var(--brand) 0%, #009688 60%, #00796B 100%);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-brand);
+    }
+    .live-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .live-badge {
+      background: rgba(255,255,255,0.22);
+      padding: 0.25rem 0.625rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+    }
+    .pulse-dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      background: #4ade80;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(74,222,128,0.7); }
+      70% { box-shadow: 0 0 0 6px rgba(74,222,128,0); }
+      100% { box-shadow: 0 0 0 0 rgba(74,222,128,0); }
+    }
+    .live-eta {
+      font-size: 2.5rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+    .live-meta { font-size: 0.85rem; opacity: 0.9; }
+    .live-body {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 1rem;
+    }
+    .live-service-side { text-align: right; }
+    .live-service-emoji { font-size: 2rem; line-height: 1; margin-bottom: 0.25rem; }
+    .btn-track {
+      width: 100%;
+      margin-top: 1rem;
+      padding: 0.75rem;
+      border-radius: 0.625rem;
+      border: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      background: rgba(255,255,255,0.22);
+      color: #fff;
+      transition: background 0.2s;
+    }
+    .btn-track:hover { background: rgba(255,255,255,0.32); }
+
+    .history-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+    }
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
     .history-title { font-weight: 600; font-size: 1rem; color: var(--text-main); }
-    .history-actions { display: flex; gap: 8px; }
-    .btn { padding: 10px 16px; border-radius: 8px; border: none; font-weight: 600; font-size: 0.9rem; cursor: pointer; flex: 1; }
-    .btn-primary { background: var(--brand); color: white; }
-    .btn-secondary { background: var(--brand-light); color: var(--brand); }
-    
-    .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
-    .empty-state span { font-size: 3rem; display: block; margin-bottom: 12px; }
+    .history-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .history-address {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+    .history-actions { display: flex; gap: 0.5rem; }
+    .btn {
+      padding: 0.625rem 1rem;
+      border-radius: 0.5rem;
+      border: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      flex: 1;
+      transition: opacity 0.2s;
+    }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-primary { background: var(--brand); color: #fff; }
+    .btn-primary:hover:not(:disabled) { background: var(--brand-dark); }
+    .btn-secondary { background: var(--brand-light); color: var(--brand-dark); }
+    .status-delivered { color: var(--success); font-weight: 600; }
 
-    /* Modal */
-    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(4px); }
-    .modal-overlay.open { display: flex; animation: fadeIn 0.2s; }
-    .modal { background: var(--surface); width: 100%; max-width: 600px; border-radius: 24px 24px 0 0; padding: 24px; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    .modal h2 { margin-bottom: 20px; font-size: 1.5rem; }
-    .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; color: var(--text-muted); }
-    .form-input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; outline: none; }
-    .form-input:focus { border-color: var(--brand); }
-    
-    /* Toast */
-    .toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-20px); background: #10b981; color: white; padding: 12px 24px; border-radius: 30px; font-weight: 600; box-shadow: 0 4px 12px rgba(16,185,129,0.3); z-index: 2000; opacity: 0; transition: all 0.3s; pointer-events: none; }
+    .empty-state {
+      text-align: center;
+      padding: 2.5rem 1rem;
+      color: var(--text-muted);
+    }
+    .empty-state .emoji { font-size: 2.75rem; display: block; margin-bottom: 0.75rem; }
+
+    /* ═══ Loading Skeleton ═══ */
+    .skeleton-wrap { display: flex; flex-direction: column; gap: 0.75rem; }
+    .skeleton-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      animation: shimmer 1.2s infinite;
+    }
+    .skeleton-line {
+      height: 0.75rem;
+      background: linear-gradient(90deg, var(--brand-xlight) 25%, var(--brand-light) 50%, var(--brand-xlight) 75%);
+      background-size: 200% 100%;
+      border-radius: 0.25rem;
+      margin-bottom: 0.5rem;
+    }
+    .skeleton-line.w60 { width: 60%; }
+    .skeleton-line.w40 { width: 40%; }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .spinner-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .spinner {
+      width: 1.75rem;
+      height: 1.75rem;
+      border: 3px solid var(--border);
+      border-left-color: var(--brand);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ═══ Booking Modal ═══ */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(13,43,42,0.45);
+      z-index: 1000;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--surface);
+      width: 100%;
+      max-width: var(--max-w);
+      border-radius: 1.5rem 1.5rem 0 0;
+      padding: 1.5rem;
+      animation: slideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+      max-height: 92dvh;
+      overflow-y: auto;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    .modal-handle {
+      width: 2.5rem;
+      height: 0.25rem;
+      background: var(--border);
+      border-radius: 999px;
+      margin: 0 auto 1rem;
+    }
+    .modal h2 { font-size: 1.35rem; margin-bottom: 1.25rem; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: var(--text-muted);
+    }
+    .form-input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      outline: none;
+    }
+    .form-input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-light); }
+    .form-input[readonly] { background: var(--bg); color: var(--text-muted); }
+    .modal-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+
+    /* ═══ Track Map Modal ═══ */
+    #track-modal .modal { border-radius: 1rem; margin: 1rem; max-height: 85dvh; }
+    #track-map { width: 100%; height: 14rem; border-radius: 0.75rem; margin: 0.75rem 0; background: var(--brand-xlight); }
+    .track-address { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+    .track-link {
+      display: block;
+      text-align: center;
+      color: var(--brand);
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+
+    /* ═══ Toast & Bottom Nav ═══ */
+    .toast {
+      position: fixed;
+      top: calc(var(--header-h) + 0.75rem);
+      left: 50%;
+      transform: translateX(-50%) translateY(-1.25rem);
+      background: var(--success);
+      color: #fff;
+      padding: 0.75rem 1.25rem;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      box-shadow: 0 4px 16px rgba(34,197,94,0.35);
+      z-index: 3000;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      max-width: calc(100vw - 2rem);
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.error { background: var(--accent); box-shadow: 0 4px 16px rgba(255,107,107,0.35); }
 
-    /* Bottom Nav */
-    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 12px 0; padding-bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 100; max-width: 600px; margin: 0 auto; }
-    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 4px; transition: color 0.2s; }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: var(--max-w);
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      padding: 0.625rem 0;
+      padding-bottom: calc(0.625rem + env(safe-area-inset-bottom, 0px));
+      z-index: 200;
+      box-shadow: 0 -2px 12px rgba(0,0,0,0.04);
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.7rem;
+      font-weight: 600;
+      gap: 0.2rem;
+      padding: 0.25rem 1rem;
+      transition: color 0.2s;
+    }
     .nav-item.active { color: var(--brand); }
-    .nav-icon { font-size: 1.4rem; }
-    
-    .spinner { border: 3px solid rgba(0,0,0,0.1); width: 24px; height: 24px; border-radius: 50%; border-left-color: var(--brand); animation: spin 1s linear infinite; display: inline-block; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .nav-icon { font-size: 1.35rem; line-height: 1; }
+
+    /* Delivered popup */
+    .popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(13,43,42,0.5);
+      z-index: 2500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .popup-overlay.open { display: flex; }
+    .popup-box {
+      background: var(--surface);
+      border-radius: 1rem;
+      padding: 1.75rem;
+      text-align: center;
+      max-width: 20rem;
+      width: 100%;
+      animation: fadeIn 0.3s ease;
+    }
+    .popup-box .emoji { font-size: 3rem; margin-bottom: 0.75rem; }
+    .popup-box h3 { margin-bottom: 0.5rem; }
+    .popup-box p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.25rem; }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- ═══ HEADER (Auth lives here) ═══ -->
   <header>
     <div class="logo">ServeNow</div>
-    <div id="auth-section">
-      <button class="auth-btn" onclick="signIn()">Sign in with Google</button>
+    <div class="auth-section" id="auth-section">
+      <button class="auth-btn" id="sign-in-btn" type="button">Sign in with Google</button>
       <div class="user-profile" id="user-profile">
-        <img id="user-avatar" src="" alt="Avatar">
+        <img id="user-avatar" src="" alt="User avatar" />
         <span id="user-name"></span>
       </div>
     </div>
   </header>
 
-  <!-- HOME VIEW -->
+  <!-- ═══ HOME VIEW ═══ -->
   <main id="home" class="view active container">
-    <input type="text" class="search-bar" id="search-input" placeholder="Search services (e.g., Ironing, Repair)...">
-    
+    <input type="search" class="search-bar" id="search-input" placeholder="Search services (e.g., Ironing, Repair)…" autocomplete="off" />
+
     <h2 class="section-title">Quick Services</h2>
-    <div class="service-grid" id="service-grid">
-      <!-- Injected via JS -->
-    </div>
+    <p class="section-sub">Tap any service to book — delivered in minutes</p>
+    <div class="service-grid" id="service-grid"></div>
 
     <h2 class="section-title">Live Service Map</h2>
-    <div class="map-container" id="map">
-      <!-- Google Map iframe injected via JS -->
+    <p class="section-sub">Providers near you · Delhi NCR</p>
+    <div class="map-container">
+      <div id="home-map"></div>
+      <div class="map-fallback hidden" id="map-fallback">
+        Add your Google Maps API key to see live provider locations.
+      </div>
+    </div>
+    <div class="provider-legend" id="provider-legend"></div>
+
+    <h2 class="section-title how-it-works">How It Works</h2>
+    <div class="how-steps">
+      <div class="how-step">
+        <span class="how-step-icon">📍</span>
+        <span class="how-step-text">Enter your location</span>
+      </div>
+      <div class="how-step">
+        <span class="how-step-icon">🛠️</span>
+        <span class="how-step-text">Choose a service</span>
+      </div>
+      <div class="how-step">
+        <span class="how-step-icon">🚀</span>
+        <span class="how-step-text">Get it done in minutes</span>
+      </div>
     </div>
   </main>
 
-  <!-- ORDERS VIEW -->
+  <!-- ═══ ORDERS VIEW ═══ -->
   <main id="orders" class="view container">
     <h2 class="section-title">Live Order</h2>
     <div id="live-order-container">
       <div class="empty-state">
-        <span>📦</span>
+        <span class="emoji">📦</span>
         <p>No active orders.</p>
       </div>
     </div>
 
-    <h2 class="section-title" style="margin-top: 32px;">Order History</h2>
+    <h2 class="section-title" style="margin-top: 1.5rem;">Order History</h2>
     <div id="history-orders-container">
-      <div style="text-align:center; padding: 20px;"><div class="spinner"></div></div>
+      <div class="skeleton-wrap" id="orders-skeleton">
+        <div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div></div>
+        <div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div></div>
+      </div>
     </div>
   </main>
 
-  <!-- Booking Modal -->
-  <div class="modal-overlay" id="booking-modal">
+  <!-- ═══ BOOKING MODAL ═══ -->
+  <div class="modal-overlay" id="booking-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal">
-      <h2 id="modal-service-name">Book Service</h2>
+      <div class="modal-handle"></div>
+      <h2 id="modal-title">Book Service</h2>
       <div class="form-group">
-        <label>Service</label>
-        <input type="text" class="form-input" id="modal-service" readonly style="background:var(--bg);color:var(--text-muted)">
+        <label for="modal-service">Service</label>
+        <input type="text" class="form-input" id="modal-service" readonly />
       </div>
       <div class="form-group">
-        <label>Pickup Address</label>
-        <input type="text" class="form-input" id="modal-address" placeholder="e.g. 42, Sector 15, Noida" required>
+        <label for="modal-address">Pickup Address</label>
+        <input type="text" class="form-input" id="modal-address" placeholder="e.g. 42, Sector 15, Noida" required />
       </div>
       <div class="form-group">
-        <label>Preferred Date & Time</label>
-        <input type="datetime-local" class="form-input" id="modal-datetime" required>
+        <label for="modal-datetime">Preferred Date &amp; Time</label>
+        <input type="datetime-local" class="form-input" id="modal-datetime" required />
       </div>
-      <div style="display:flex; gap: 12px; margin-top: 24px;">
-        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-primary" onclick="confirmBooking()">Confirm Booking</button>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" type="button" id="cancel-booking-btn">Cancel</button>
+        <button class="btn btn-primary" type="button" id="confirm-booking-btn">Confirm Booking</button>
       </div>
     </div>
   </div>
 
-  <!-- Toast -->
+  <!-- ═══ TRACK MAP MODAL ═══ -->
+  <div class="modal-overlay" id="track-modal" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <h2>Track Order</h2>
+      <p class="track-address" id="track-address-text"></p>
+      <div id="track-map"></div>
+      <a class="track-link" id="track-directions-link" href="#" target="_blank" rel="noopener">Open in Google Maps ↗</a>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" type="button" id="close-track-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ DELIVERED POPUP ═══ -->
+  <div class="popup-overlay" id="delivered-popup">
+    <div class="popup-box">
+      <div class="emoji">🎉</div>
+      <h3>Order Delivered!</h3>
+      <p>Your service has arrived. Rate your experience in the app.</p>
+      <button class="btn btn-primary" type="button" id="close-delivered-btn" style="width:100%">Awesome!</button>
+    </div>
+  </div>
+
+  <!-- ═══ TOAST ═══ -->
   <div class="toast" id="toast">Order Placed Successfully!</div>
 
-  <!-- Bottom Nav -->
-  <nav class="bottom-nav">
+  <!-- ═══ BOTTOM NAV (Hash routing) ═══ -->
+  <nav class="bottom-nav" aria-label="Main navigation">
     <a href="#home" class="nav-item active" id="nav-home">
       <span class="nav-icon">🏠</span>
       <span>Home</span>
@@ -187,144 +701,314 @@
     </a>
   </nav>
 
-  <!-- 1. FIREBASE CDNS (v9 Compat) -->
+  <!-- ═══ FIREBASE CDN (v10 compat — single file, no build) ═══ -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-  <!-- 2. GOOGLE MAPS API -->
   <script>
-    // PLACEHOLDER API KEY
-    const MAPS_API_KEY = "REPLACE_WITH_YOUR_KEY"; 
-    
-    // We append the script inside DOMContentLoaded or directly.
-    // For Hackathon prototype, we can use an iframe fallback if API key is invalid
-  </script>
+    /* ═══════════════════════════════════════════════════════════
+       ServeNow — Single-file PWA
+       Sections: Config → Auth → Firestore → Maps → UI Handlers
+       ═══════════════════════════════════════════════════════════ */
 
-  <!-- 3. APPLICATION LOGIC -->
-  <script>
-    // --- FIREBASE CONFIG (REPLACE WITH YOUR CONFIG) ---
+    // ─── PLACEHOLDERS (replace before demo) ───
+    const MAPS_API_KEY = "REPLACE_WITH_YOUR_KEY";
+
     const firebaseConfig = {
-      apiKey: "AIzaSyFakeKeyPlaceholderForHackathon",
-      authDomain: "servenow-hackathon.firebaseapp.com",
-      projectId: "servenow-hackathon",
-      storageBucket: "servenow-hackathon.appspot.com",
-      messagingSenderId: "1234567890",
-      appId: "1:1234567890:web:abcdef123456"
+      /* REPLACE WITH YOUR CONFIG */
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
     };
 
-    // --- MOCK FIREBASE FOR LOCAL DEMO IF CONFIG IS INVALID ---
-    // In a real environment, you'd initialize Firebase. 
-    // If the API key is a placeholder, we use an in-memory mock to ensure the demo works out-of-the-box.
-    let db, auth, currentUser = null;
-    let mockOrders = [];
-    const isMock = firebaseConfig.apiKey.includes("FakeKey");
-
-    if (!isMock) {
-      firebase.initializeApp(firebaseConfig);
-      db = firebase.firestore();
-      auth = firebase.auth();
-    } else {
-      console.warn("Using Mock Firebase. Replace firebaseConfig to use real Firestore.");
-      auth = {
-        onAuthStateChanged: (cb) => cb(currentUser),
-        signInWithPopup: async () => { currentUser = { uid: "user123", displayName: "Hackathon Judge", photoURL: "https://i.pravatar.cc/150?u=judge" }; auth.onAuthStateChangedCb(currentUser); },
-        onAuthStateChangedCb: () => {}
-      };
-      auth.onAuthStateChanged = (cb) => { auth.onAuthStateChangedCb = cb; cb(currentUser); };
-      
-      // Mock Firestore
-      db = {
-        collection: () => ({
-          add: async (doc) => { 
-            const newDoc = { id: 'ORD-' + Math.floor(Math.random()*90000), ...doc };
-            mockOrders.unshift(newDoc); 
-            if(window.onMockDataChanged) window.onMockDataChanged();
-            return newDoc; 
-          },
-          where: () => ({
-            orderBy: () => ({
-              onSnapshot: (cb) => {
-                window.onMockDataChanged = () => cb({ docs: mockOrders.map(data => ({ id: data.id, data: () => data })) });
-                window.onMockDataChanged();
-              }
-            })
-          })
-        })
-      };
-    }
-
-    // --- AUTHENTICATION ---
-    function signIn() {
-      if(isMock) { auth.signInWithPopup(); return; }
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider).catch(err => console.error(err));
-    }
-
-    auth.onAuthStateChanged((user) => {
-      const btn = document.querySelector('.auth-btn');
-      const profile = document.getElementById('user-profile');
-      if (user) {
-        currentUser = user;
-        btn.style.display = 'none';
-        profile.style.display = 'flex';
-        document.getElementById('user-avatar').src = user.photoURL || 'https://i.pravatar.cc/150';
-        document.getElementById('user-name').textContent = user.displayName;
-        fetchOrders();
-      } else {
-        currentUser = null;
-        btn.style.display = 'block';
-        profile.style.display = 'none';
-        document.getElementById('history-orders-container').innerHTML = `<div class="empty-state"><span>🔒</span><p>Sign in to view your orders.</p></div>`;
-      }
-    });
-
-    // --- DATA & UI STATE ---
+    // ─── SERVICE CATALOG ───
     const SERVICES = [
-      { id: 's1', name: 'Ironing', emoji: '👕', time: '30 min', price: 25 },
-      { id: 's2', name: 'Dry Cleaning', emoji: '✨', time: '24 hrs', price: 299 },
-      { id: 's3', name: 'Shoe Repair', emoji: '👟', time: '2 hrs', price: 149 },
-      { id: 's4', name: 'Laundry', emoji: '🫧', time: '24 hrs', price: 69 },
-      { id: 's5', name: 'Tailoring', emoji: '✂️', time: '1-2 days', price: 99 },
-      { id: 's6', name: 'Watch Repair', emoji: '⌚', time: '1 hr', price: 199 },
+      { id: 's1', name: 'Ironing',        emoji: '👕', time: '30 min',  price: 25  },
+      { id: 's2', name: 'Dry Cleaning',   emoji: '✨', time: '24 hrs',  price: 299 },
+      { id: 's3', name: 'Shoe Repair',    emoji: '👟', time: '2 hrs',   price: 149 },
+      { id: 's4', name: 'Laundry',        emoji: '🫧', time: '24 hrs',  price: 69  },
+      { id: 's5', name: 'Tailoring',      emoji: '✂️', time: '1-2 days', price: 99 },
+      { id: 's6', name: 'Watch Repair',   emoji: '⌚', time: '1 hr',    price: 199 },
+      { id: 's7', name: 'Stitching',      emoji: '🧵', time: '2-3 days', price: 399 },
+      { id: 's8', name: 'Bag & Leather',  emoji: '👜', time: '1-2 days', price: 249 },
     ];
 
-    let selectedService = null;
-    let liveOrderEtaInterval = null;
+    // ─── SERVICE PROVIDERS (Google Maps markers near Delhi) ───
+    const DELHI_CENTER = { lat: 28.6139, lng: 77.2090 };
+    const PROVIDERS = [
+      { name: 'Ramesh Tailors', emoji: '✂️', lat: 28.6155, lng: 77.2115, services: 'Ironing · Tailoring' },
+      { name: 'SparkClean',     emoji: '✨', lat: 28.6120, lng: 77.2075, services: 'Dry Clean · Laundry' },
+      { name: 'SoleRevive',     emoji: '👟', lat: 28.6148, lng: 77.2050, services: 'Shoe · Bag Repair' },
+    ];
 
-    // Render Home Services
-    function renderServices(filter = "") {
-      const grid = document.getElementById('service-grid');
-      const filtered = SERVICES.filter(s => s.name.toLowerCase().includes(filter.toLowerCase()));
-      grid.innerHTML = filtered.map(s => `
-        <div class="service-card" onclick="openModal('${s.id}')">
-          <div class="service-icon">${s.emoji}</div>
-          <div class="service-name">${s.name}</div>
-          <div class="service-time">${s.time}</div>
-        </div>
-      `).join('');
+    // ─── APP STATE ───
+    let db, auth, currentUser = null;
+    let selectedService = null;
+    let allOrders = [];
+    let liveOrderId = null;
+    let liveOrderEta = 0;
+    let etaInterval = null;
+    let unsubscribeOrders = null;
+    let homeMap = null;
+    let trackMap = null;
+    let mapsReady = false;
+
+    // ─── FIREBASE INIT ───
+    firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth();
+    db = firebase.firestore();
+
+    // ─── AUTH: Google Sign-In ───
+    function signIn() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider).catch(function (err) {
+        console.error('Sign-in error:', err);
+        showToast(err.message || 'Sign-in failed', true);
+      });
     }
 
-    // Search Handler
-    document.getElementById('search-input').addEventListener('input', (e) => {
-      renderServices(e.target.value);
+    auth.onAuthStateChanged(function (user) {
+      currentUser = user;
+      var signBtn = document.getElementById('sign-in-btn');
+      var profile = document.getElementById('user-profile');
+
+      if (user) {
+        signBtn.style.display = 'none';
+        profile.style.display = 'flex';
+        document.getElementById('user-avatar').src = user.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.displayName || 'U');
+        document.getElementById('user-name').textContent = user.displayName || 'User';
+        subscribeOrders();
+      } else {
+        signBtn.style.display = 'block';
+        profile.style.display = 'none';
+        if (unsubscribeOrders) { unsubscribeOrders(); unsubscribeOrders = null; }
+        allOrders = [];
+        liveOrderId = null;
+        stopEtaTimer();
+        renderOrdersEmpty();
+        updateHomeMap(null);
+      }
     });
 
-    // --- MODAL & BOOKING FLOW ---
-    function openModal(serviceId) {
+    document.getElementById('sign-in-btn').addEventListener('click', signIn);
+
+    // ─── FIRESTORE: Real-time orders listener ───
+    function fetchOrders() {
       if (!currentUser) {
-        alert("Please Sign In to book a service!");
+        renderOrdersEmpty();
         return;
       }
-      selectedService = SERVICES.find(s => s.id === serviceId);
-      document.getElementById('modal-service').value = `${selectedService.emoji} ${selectedService.name} (₹${selectedService.price})`;
-      
-      // Auto-fill datetime to now + 30 mins
-      const now = new Date();
+      if (unsubscribeOrders) unsubscribeOrders();
+
+      showOrdersSkeleton();
+
+      try {
+        unsubscribeOrders = db.collection('orders')
+          .where('userId', '==', currentUser.uid)
+          .onSnapshot(
+            function (snapshot) {
+              allOrders = snapshot.docs
+                .map(function (doc) { return Object.assign({ id: doc.id }, doc.data()); })
+                .sort(function (a, b) { return (b.timestamp || 0) - (a.timestamp || 0); });
+              renderOrders(allOrders);
+            },
+            function (err) {
+              console.error('Orders listener error:', err);
+              document.getElementById('history-orders-container').innerHTML =
+                '<div class="empty-state"><span class="emoji">⚠️</span><p>Failed to load orders. Please check your internet connection.</p></div>';
+              showToast('Failed to load orders. Please check your internet connection.', true);
+            }
+          );
+      } catch (err) {
+        console.error('fetchOrders error:', err);
+        document.getElementById('history-orders-container').innerHTML =
+          '<div class="empty-state"><span class="emoji">⚠️</span><p>Failed to load orders. Please check your internet connection.</p></div>';
+        showToast('Failed to load orders. Please check your internet connection.', true);
+      }
+    }
+
+    function subscribeOrders() { fetchOrders(); }
+
+    function showOrdersSkeleton() {
+      document.getElementById('history-orders-container').innerHTML =
+        '<div class="skeleton-wrap">' +
+          '<div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div></div>' +
+          '<div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div></div>' +
+        '</div>';
+    }
+
+    function renderOrdersEmpty() {
+      document.getElementById('live-order-container').innerHTML =
+        '<div class="empty-state"><span class="emoji">📦</span><p>No active orders.</p></div>';
+      if (!currentUser) {
+        document.getElementById('history-orders-container').innerHTML =
+          '<div class="empty-state"><span class="emoji">🔒</span><p>Sign in to view your orders.</p></div>';
+      } else {
+        document.getElementById('history-orders-container').innerHTML =
+          '<div class="empty-state"><span class="emoji">📝</span><p>No past orders yet.</p></div>';
+      }
+    }
+
+    // ─── ORDERS UI: Live card + History ───
+    function renderOrders(orders) {
+      var liveContainer = document.getElementById('live-order-container');
+      var historyContainer = document.getElementById('history-orders-container');
+
+      var liveIdx = orders.findIndex(function (o) {
+        return o.status === 'Pending' || o.status === 'Picked Up';
+      });
+      var liveOrder = liveIdx > -1 ? orders[liveIdx] : null;
+      var historyOrders = orders.filter(function (_, i) { return i !== liveIdx; });
+
+      if (liveOrder) {
+        liveOrderId = liveOrder.id;
+        liveOrderEta = typeof liveOrder.eta === 'number' ? liveOrder.eta : 22;
+        var orderLabel = liveOrder.id.length > 8 ? liveOrder.id.slice(0, 8).toUpperCase() : liveOrder.id;
+
+        liveContainer.innerHTML =
+          '<div class="live-order-card">' +
+            '<div class="live-header">' +
+              '<div class="live-badge"><span class="pulse-dot"></span> ' + escapeHtml(liveOrder.status) + '</div>' +
+              '<div>#' + escapeHtml(orderLabel) + '</div>' +
+            '</div>' +
+            '<div class="live-body">' +
+              '<div>' +
+                '<div class="live-meta">Arriving in</div>' +
+                '<div class="live-eta" id="live-eta-display">' + liveOrderEta + ' min</div>' +
+                '<div class="live-meta">📍 ' + escapeHtml(liveOrder.address || '') + '</div>' +
+              '</div>' +
+              '<div class="live-service-side">' +
+                '<div class="live-service-emoji">' + (liveOrder.emoji || '📦') + '</div>' +
+                '<div style="font-weight:600;">' + escapeHtml(liveOrder.service) + '</div>' +
+                '<div style="font-size:0.85rem;opacity:0.9;">₹' + (liveOrder.price || 0) + '</div>' +
+              '</div>' +
+            '</div>' +
+            '<button class="btn-track" type="button">Track →</button>' +
+          '</div>';
+
+        liveContainer.querySelector('.btn-track').addEventListener('click', function () {
+          trackOrder(liveOrder.address);
+        });
+
+        updateHomeMap(liveOrder.address);
+        startEtaTimer(liveOrderId, liveOrderEta);
+      } else {
+        liveOrderId = null;
+        stopEtaTimer();
+        updateHomeMap(null);
+        liveContainer.innerHTML =
+          '<div class="empty-state"><span class="emoji">📦</span><p>No active orders.</p></div>';
+      }
+
+      if (historyOrders.length > 0) {
+        historyContainer.innerHTML = historyOrders.map(function (o) {
+          var statusClass = o.status === 'Delivered' ? 'status-delivered' : '';
+          return (
+            '<div class="history-card">' +
+              '<div class="history-header">' +
+                '<span>' + formatDate(o.timestamp) + '</span>' +
+                '<span class="' + statusClass + '">' + escapeHtml(o.status || 'Unknown') + '</span>' +
+              '</div>' +
+              '<div class="history-row">' +
+                '<div class="history-title">' + (o.emoji || '') + ' ' + escapeHtml(o.service) + '</div>' +
+                '<div style="font-weight:700;">₹' + (o.price || 0) + '</div>' +
+              '</div>' +
+              '<div class="history-address">📍 ' + escapeHtml(o.address || '') + '</div>' +
+              '<div class="history-actions">' +
+                '<button class="btn btn-secondary reorder-btn" type="button" data-order-id="' + escapeHtml(o.id) + '">↺ Reorder</button>' +
+              '</div>' +
+            '</div>'
+          );
+        }).join('');
+
+        historyContainer.querySelectorAll('.reorder-btn').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            reorder(btn.getAttribute('data-order-id'));
+          });
+        });
+      } else {
+        historyContainer.innerHTML =
+          '<div class="empty-state" style="padding:1rem 0;"><span class="emoji">📝</span><p>No past orders yet.</p></div>';
+      }
+    }
+
+    function trackOrder(address) {
+      var dest = (address || '').trim() || 'New Delhi, India';
+      window.open(
+        'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(dest),
+        '_blank',
+        'noopener'
+      );
+    }
+
+    // ─── ETA MICRO-INTERACTION: −1 min every 60 seconds ───
+    function startEtaTimer(orderId, startMinutes) {
+      stopEtaTimer();
+      var minutes = startMinutes;
+
+      etaInterval = setInterval(function () {
+        minutes -= 1;
+        var el = document.getElementById('live-eta-display');
+        if (el) {
+          if (minutes <= 0) {
+            el.textContent = '0 min';
+            stopEtaTimer();
+            markDelivered(orderId);
+          } else {
+            el.textContent = minutes + ' min';
+          }
+        }
+      }, 60000);
+    }
+
+    function stopEtaTimer() {
+      if (etaInterval) {
+        clearInterval(etaInterval);
+        etaInterval = null;
+      }
+    }
+
+    function markDelivered(orderId) {
+      try {
+        db.collection('orders').doc(orderId).update({ status: 'Delivered', eta: 0 })
+          .then(function () {
+            document.getElementById('delivered-popup').classList.add('open');
+          })
+          .catch(function (err) {
+            console.error('Delivered update failed:', err);
+            showToast('Failed to update order. Please check your internet connection.', true);
+          });
+      } catch (err) {
+        console.error('Delivered update failed:', err);
+        showToast('Failed to update order. Please check your internet connection.', true);
+      }
+    }
+
+    document.getElementById('close-delivered-btn').addEventListener('click', function () {
+      document.getElementById('delivered-popup').classList.remove('open');
+    });
+
+    // ─── FIRESTORE: Create booking ───
+    function openModal(serviceId) {
+      if (!currentUser) {
+        showToast('Please sign in to book a service', true);
+        return;
+      }
+      selectedService = SERVICES.find(function (s) { return s.id === serviceId; });
+      if (!selectedService) return;
+
+      document.getElementById('modal-service').value =
+        selectedService.emoji + ' ' + selectedService.name + ' (' + selectedService.time + ') — ₹' + selectedService.price;
+
+      var now = new Date();
       now.setMinutes(now.getMinutes() + 30);
-      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-      document.getElementById('modal-datetime').value = now.toISOString().slice(0,16);
-      
+      var local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+      document.getElementById('modal-datetime').value = local.toISOString().slice(0, 16);
+
       document.getElementById('booking-modal').classList.add('open');
     }
 
@@ -333,196 +1017,332 @@
     }
 
     async function confirmBooking() {
-      const address = document.getElementById('modal-address').value;
-      const datetime = document.getElementById('modal-datetime').value;
-      if(!address || !datetime) return alert("Please fill all fields");
+      var address = document.getElementById('modal-address').value.trim();
+      var datetime = document.getElementById('modal-datetime').value;
+      if (!address || !datetime) {
+        showToast('Please fill all fields', true);
+        return;
+      }
 
-      const btn = document.querySelector('.modal .btn-primary');
-      btn.textContent = "Processing...";
+      var btn = document.getElementById('confirm-booking-btn');
+      btn.textContent = 'Processing…';
       btn.disabled = true;
 
-      const orderData = {
+      var priceVariance = Math.floor(Math.random() * 11) - 5;
+      var finalPrice = Math.max(10, selectedService.price + priceVariance);
+
+      var orderData = {
         service: selectedService.name,
         emoji: selectedService.emoji,
-        price: selectedService.price,
+        price: finalPrice,
         address: address,
         datetime: datetime,
-        status: "Pending",
+        status: 'Pending',
         userId: currentUser.uid,
-        timestamp: new Date().getTime(),
-        eta: Math.floor(Math.random() * 15) + 15 // Random ETA 15-30 mins
+        userName: currentUser.displayName || '',
+        timestamp: Date.now(),
+        eta: Math.floor(Math.random() * 16) + 15,
+        provider: PROVIDERS[Math.floor(Math.random() * PROVIDERS.length)].name
       };
 
       try {
-        await db.collection("orders").add(orderData);
+        await db.collection('orders').add(orderData);
         closeModal();
-        showToast();
-        // Clear form
-        document.getElementById('modal-address').value = "";
-        btn.textContent = "Confirm Booking";
-        btn.disabled = false;
-        // Auto navigate to orders
-        window.location.hash = "#orders";
+        document.getElementById('modal-address').value = '';
+        showToast('Order Placed Successfully!');
+        window.location.hash = '#orders';
       } catch (err) {
-        console.error("Error booking: ", err);
-        btn.textContent = "Confirm Booking";
+        console.error('Booking error:', err);
+        showToast('Failed to place order. Please check your internet connection.', true);
+      } finally {
+        btn.textContent = 'Confirm Booking';
         btn.disabled = false;
       }
     }
 
-    function showToast() {
-      const toast = document.getElementById('toast');
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3000);
+    // ─── FIRESTORE: Reorder (duplicate with new timestamp) ───
+    async function reorder(orderId) {
+      if (!currentUser) return;
+      var original = allOrders.find(function (o) { return o.id === orderId; });
+      if (!original) return;
+
+      var btn = document.querySelector('[data-order-id="' + orderId + '"]');
+      if (btn) { btn.textContent = 'Reordering…'; btn.disabled = true; }
+
+      var reorderData = {
+        service: original.service,
+        emoji: original.emoji,
+        price: original.price,
+        address: original.address,
+        datetime: original.datetime,
+        status: 'Pending',
+        userId: currentUser.uid,
+        userName: currentUser.displayName || '',
+        timestamp: Date.now(),
+        eta: Math.floor(Math.random() * 16) + 15,
+        provider: original.provider || PROVIDERS[0].name,
+        reorderedFrom: orderId
+      };
+
+      try {
+        await db.collection('orders').add(reorderData);
+        showToast('Reorder placed!');
+        window.location.hash = '#orders';
+      } catch (err) {
+        console.error('Reorder error:', err);
+        showToast('Failed to reorder. Please check your internet connection.', true);
+      } finally {
+        if (btn) { btn.textContent = '↺ Reorder'; btn.disabled = false; }
+      }
     }
 
-    // --- FIRESTORE REAL-TIME ORDERS ---
-    let unsubscribeOrders = null;
+    // ─── GOOGLE MAPS: Home map with provider markers ───
+    function initHomeMap() {
+      if (!window.google || !window.google.maps) {
+        showMapFallback();
+        return;
+      }
+      mapsReady = true;
+      document.getElementById('map-fallback').classList.add('hidden');
 
-    function fetchOrders() {
-      if(unsubscribeOrders) unsubscribeOrders();
-      if(!currentUser) return;
+      homeMap = new google.maps.Map(document.getElementById('home-map'), {
+        center: DELHI_CENTER,
+        zoom: 14,
+        disableDefaultUI: true,
+        zoomControl: true,
+        gestureHandling: 'cooperative',
+        styles: [
+          { featureType: 'poi', stylers: [{ visibility: 'off' }] }
+        ]
+      });
 
-      const ordersRef = db.collection("orders").where("userId", "==", currentUser.uid).orderBy("timestamp", "desc");
-      
-      unsubscribeOrders = ordersRef.onSnapshot(snapshot => {
-        const allOrders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        renderOrders(allOrders);
+      PROVIDERS.forEach(function (p) {
+        new google.maps.Marker({
+          position: { lat: p.lat, lng: p.lng },
+          map: homeMap,
+          title: p.name,
+          label: { text: p.emoji, fontSize: '16px' }
+        });
+      });
+
+      renderProviderLegend();
+    }
+
+    function renderProviderLegend() {
+      document.getElementById('provider-legend').innerHTML = PROVIDERS.map(function (p) {
+        return '<span class="provider-chip">' + p.emoji + ' ' + escapeHtml(p.name) + '</span>';
+      }).join('');
+    }
+
+    function showMapFallback() {
+      document.getElementById('home-map').style.display = 'none';
+      document.getElementById('map-fallback').classList.add('hidden');
+      updateHomeMap(null);
+      renderProviderLegend();
+    }
+
+    function updateHomeMap(address) {
+      if (mapsReady) return;
+
+      var mapEl = document.getElementById('home-map');
+      if (!mapEl) return;
+
+      var query = (address || '').trim() || 'New Delhi, India';
+      var embedUrl = 'https://maps.google.com/maps?q=' + encodeURIComponent(query) +
+        '&t=&z=14&ie=UTF8&iwloc=&output=embed';
+
+      var iframe = mapEl.querySelector('iframe');
+      if (!iframe) {
+        mapEl.style.display = 'block';
+        mapEl.innerHTML = '<iframe width="100%" height="100%" style="border:0;" loading="lazy" allowfullscreen src="' + embedUrl + '"></iframe>';
+      } else if (iframe.src !== embedUrl) {
+        iframe.src = embedUrl;
+      }
+    }
+
+    // ─── GOOGLE MAPS: Track modal ───
+    function openTrackModal(order) {
+      var provider = PROVIDERS.find(function (p) { return p.name === order.provider; }) || PROVIDERS[0];
+      var dest = order.address || 'New Delhi, India';
+
+      document.getElementById('track-address-text').textContent =
+        '📍 ' + dest + ' · Provider: ' + (order.provider || provider.name);
+
+      var directionsUrl = 'https://www.google.com/maps/dir/?api=1&origin=' +
+        provider.lat + ',' + provider.lng +
+        '&destination=' + encodeURIComponent(dest) +
+        '&travelmode=driving';
+      document.getElementById('track-directions-link').href = directionsUrl;
+
+      document.getElementById('track-modal').classList.add('open');
+
+      if (mapsReady && window.google && window.google.maps) {
+        setTimeout(function () {
+          trackMap = new google.maps.Map(document.getElementById('track-map'), {
+            center: { lat: provider.lat, lng: provider.lng },
+            zoom: 13,
+            disableDefaultUI: true,
+            zoomControl: true
+          });
+
+          new google.maps.Marker({
+            position: { lat: provider.lat, lng: provider.lng },
+            map: trackMap,
+            title: provider.name,
+            label: 'P'
+          });
+
+          var geocoder = new google.maps.Geocoder();
+          geocoder.geocode({ address: dest }, function (results, status) {
+            if (status === 'OK' && results[0]) {
+              var loc = results[0].geometry.location;
+              new google.maps.Marker({
+                position: loc,
+                map: trackMap,
+                title: 'Delivery',
+                label: 'D'
+              });
+              var bounds = new google.maps.LatLngBounds();
+              bounds.extend({ lat: provider.lat, lng: provider.lng });
+              bounds.extend(loc);
+              trackMap.fitBounds(bounds, 48);
+            }
+          });
+        }, 200);
+      } else {
+        document.getElementById('track-map').innerHTML =
+          '<div class="map-fallback" style="height:100%;display:flex;align-items:center;justify-content:center;padding:1rem;">' +
+            'Map unavailable — use the link below to open Google Maps directions.' +
+          '</div>';
+      }
+    }
+
+    function closeTrackModal() {
+      document.getElementById('track-modal').classList.remove('open');
+      document.getElementById('track-map').innerHTML = '';
+      trackMap = null;
+    }
+
+    // ─── HOME: Service grid + search filter ───
+    function renderServices(filter) {
+      filter = (filter || '').toLowerCase().trim();
+      var grid = document.getElementById('service-grid');
+      var filtered = SERVICES.filter(function (s) {
+        return s.name.toLowerCase().includes(filter) ||
+               s.time.toLowerCase().includes(filter);
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '<div class="no-results">No services match "' + escapeHtml(filter) + '"</div>';
+        return;
+      }
+
+      grid.innerHTML = filtered.map(function (s) {
+        return (
+          '<div class="service-card" data-service-id="' + s.id + '" tabindex="0" role="button">' +
+            '<div class="service-icon">' + s.emoji + '</div>' +
+            '<div class="service-name">' + escapeHtml(s.name) + '</div>' +
+            '<div class="service-time">' + escapeHtml(s.time) + '</div>' +
+            '<div class="service-price">from ₹' + s.price + '</div>' +
+          '</div>'
+        );
+      }).join('');
+
+      grid.querySelectorAll('.service-card').forEach(function (card) {
+        card.addEventListener('click', function () {
+          openModal(card.getAttribute('data-service-id'));
+        });
+        card.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openModal(card.getAttribute('data-service-id'));
+          }
+        });
       });
     }
 
-    function renderOrders(orders) {
-      const liveContainer = document.getElementById('live-order-container');
-      const historyContainer = document.getElementById('history-orders-container');
-      
-      // Find the first "Pending" or "Picked Up" order
-      const liveOrderIndex = orders.findIndex(o => o.status === "Pending" || o.status === "Picked Up");
-      const liveOrder = liveOrderIndex > -1 ? orders[liveOrderIndex] : null;
-      
-      // History is everything else
-      const historyOrders = orders.filter((_, i) => i !== liveOrderIndex);
+    document.getElementById('search-input').addEventListener('input', function (e) {
+      renderServices(e.target.value);
+    });
 
-      // Render Live Order
-      if (liveOrder) {
-        liveContainer.innerHTML = `
-          <div class="live-order-card">
-            <div class="live-header">
-              <div class="live-badge"><span class="pulse-dot"></span> Live Tracking</div>
-              <div>#${liveOrder.id.slice(0,8).toUpperCase()}</div>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:flex-end;">
-              <div>
-                <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 4px;">Arriving in</div>
-                <div class="live-eta" id="live-eta-display">${liveOrder.eta}:00</div>
-              </div>
-              <div style="text-align:right;">
-                <div style="font-size:2rem; margin-bottom:4px;">${liveOrder.emoji}</div>
-                <div style="font-weight:600;">${liveOrder.service}</div>
-              </div>
-            </div>
-            <button class="btn" style="width:100%; margin-top:16px; background:rgba(255,255,255,0.2); color:white;" onclick="trackOrder('${liveOrder.address}')">📍 Track on Map</button>
-          </div>
-        `;
-        startEtaTimer(liveOrder.eta);
-      } else {
-        liveContainer.innerHTML = `<div class="empty-state"><span>📦</span><p>No active orders.</p></div>`;
-        if(liveOrderEtaInterval) clearInterval(liveOrderEtaInterval);
-      }
-
-      // Render History
-      if (historyOrders.length > 0) {
-        historyContainer.innerHTML = historyOrders.map(o => `
-          <div class="history-card">
-            <div class="history-header">
-              <span>${new Date(o.timestamp).toLocaleDateString()}</span>
-              <span style="color:${o.status==='Delivered' ? 'var(--success)' : 'var(--text-muted)'}; font-weight:600;">${o.status}</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <div class="history-title">${o.emoji} ${o.service}</div>
-              <div style="font-weight:700;">₹${o.price}</div>
-            </div>
-            <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:8px;">📍 ${o.address}</div>
-            <div class="history-actions">
-              <button class="btn btn-secondary" onclick="reorder('${o.id}')">↺ Reorder</button>
-            </div>
-          </div>
-        `).join('');
-      } else {
-        historyContainer.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:0.9rem;">No past orders.</p>`;
-      }
+    // ─── UI HELPERS ───
+    function showToast(msg, isError) {
+      var toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.toggle('error', !!isError);
+      toast.classList.add('show');
+      setTimeout(function () { toast.classList.remove('show'); }, 3200);
     }
 
-    // --- REORDER LOGIC ---
-    function reorder(orderId) {
-      if(!currentUser) return;
-      alert("Opening booking flow for this service...");
-      // A quick hack for the hackathon prototype: open the booking modal for the first service to simulate it
-      openModal('s1');
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
     }
 
-    function trackOrder(address) {
-      // In a real app, open native maps or show full screen modal
-      window.open(`https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=14&ie=UTF8&iwloc=`, '_blank');
+    function formatDate(ts) {
+      if (!ts) return '';
+      return new Date(ts).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
     }
 
-    // --- ETA TIMER (MICRO-INTERACTION) ---
-    function startEtaTimer(startMinutes) {
-      if(liveOrderEtaInterval) clearInterval(liveOrderEtaInterval);
-      let totalSeconds = startMinutes * 60;
-      
-      liveOrderEtaInterval = setInterval(() => {
-        if(totalSeconds <= 0) {
-          clearInterval(liveOrderEtaInterval);
-          const el = document.getElementById('live-eta-display');
-          if(el) el.textContent = "Arrived";
-          // We could update Firestore status to "Delivered" here
-          return;
-        }
-        totalSeconds--;
-        const m = Math.floor(totalSeconds / 60);
-        const s = totalSeconds % 60;
-        const el = document.getElementById('live-eta-display');
-        if(el) el.textContent = `${m}:${s.toString().padStart(2, '0')}`;
-      }, 1000); // Ticks every 1 second
-    }
-
-    // --- GOOGLE MAPS INJECTION (HOME PAGE) ---
-    function initMapIframe() {
-      // If API key is not provided, use an iframe as a robust fallback for the demo
-      const mapContainer = document.getElementById('map');
-      mapContainer.innerHTML = `<iframe 
-        width="100%" 
-        height="100%" 
-        style="border:0;" 
-        loading="lazy" 
-        allowfullscreen 
-        src="https://maps.google.com/maps?q=New+Delhi&t=&z=12&ie=UTF8&iwloc=&output=embed">
-      </iframe>`;
-    }
-
-    // --- ROUTER (Hash Change) ---
+    // ─── HASH ROUTER ───
     function handleRoute() {
-      const hash = window.location.hash || '#home';
-      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      
-      const targetView = document.querySelector(hash);
-      const targetNav = document.querySelector(`.nav-item[href="${hash}"]`);
-      
-      if(targetView) targetView.classList.add('active');
-      if(targetNav) targetNav.classList.add('active');
+      var hash = window.location.hash || '#home';
+      document.querySelectorAll('.view').forEach(function (v) { v.classList.remove('active'); });
+      document.querySelectorAll('.nav-item').forEach(function (n) { n.classList.remove('active'); });
 
-      window.scrollTo(0,0);
+      var targetView = document.querySelector(hash);
+      var targetNav = document.querySelector('.nav-item[href="' + hash + '"]');
+      if (targetView) targetView.classList.add('active');
+      if (targetNav) targetNav.classList.add('active');
+
+      window.scrollTo(0, 0);
+
+      if (hash === '#home' && homeMap) {
+        google.maps.event.trigger(homeMap, 'resize');
+        homeMap.setCenter(DELHI_CENTER);
+      }
     }
 
     window.addEventListener('hashchange', handleRoute);
 
-    // --- INITIALIZATION ---
-    window.onload = () => {
-      renderServices();
-      handleRoute();
-      initMapIframe(); // Init Map
+    // ─── MODAL & OVERLAY HANDLERS ───
+    document.getElementById('cancel-booking-btn').addEventListener('click', closeModal);
+    document.getElementById('confirm-booking-btn').addEventListener('click', confirmBooking);
+    document.getElementById('close-track-btn').addEventListener('click', closeTrackModal);
+
+    document.getElementById('booking-modal').addEventListener('click', function (e) {
+      if (e.target === e.currentTarget) closeModal();
+    });
+    document.getElementById('track-modal').addEventListener('click', function (e) {
+      if (e.target === e.currentTarget) closeTrackModal();
+    });
+
+    // ─── GOOGLE MAPS SCRIPT LOADER ───
+    window.initGoogleMaps = function () {
+      initHomeMap();
     };
+
+    (function loadMapsScript() {
+      if (!MAPS_API_KEY || MAPS_API_KEY === 'REPLACE_WITH_YOUR_KEY') {
+        showMapFallback();
+        return;
+      }
+      var script = document.createElement('script');
+      script.src = 'https://maps.googleapis.com/maps/api/js?key=' + encodeURIComponent(MAPS_API_KEY) + '&libraries=places&callback=initGoogleMaps';
+      script.async = true;
+      script.defer = true;
+      script.onerror = showMapFallback;
+      document.head.appendChild(script);
+    })();
+
+    // ─── BOOT ───
+    renderServices();
+    handleRoute();
+    renderProviderLegend();
+    updateHomeMap(null);
   </script>
 </body>
 </html>
