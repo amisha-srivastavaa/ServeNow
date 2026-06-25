@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ServeNow Prototype</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --brand: #2563eb;
+      --brand-hover: #1d4ed8;
+      --brand-light: #eff6ff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --success: #10b981;
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+    
+    body { background: var(--bg); color: var(--text-main); line-height: 1.5; padding-bottom: 80px; }
+
+    /* Header */
+    header {
+      background: var(--surface); padding: 16px 20px; position: sticky; top: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .logo { font-weight: 800; font-size: 1.5rem; color: var(--brand); letter-spacing: -0.5px; }
+    .auth-btn { background: #333; color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 0.85rem; cursor: pointer; }
+    .user-profile { display: none; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9rem; }
+    .user-profile img { width: 32px; height: 32px; border-radius: 50%; }
+
+    /* Container */
+    .container { max-width: 600px; margin: 0 auto; padding: 16px; }
+    .view { display: none; animation: fadeIn 0.3s ease; }
+    .view.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Home View Elements */
+    .search-bar { width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border); font-size: 1rem; margin-bottom: 20px; outline: none; background: var(--surface); }
+    .search-bar:focus { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-light); }
+    
+    .section-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; }
+    
+    .service-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
+    .service-card { background: var(--surface); border-radius: var(--radius); padding: 16px; border: 1px solid var(--border); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .service-card:active { transform: scale(0.96); }
+    .service-icon { font-size: 2.5rem; margin-bottom: 8px; }
+    .service-name { font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; }
+    .service-time { font-size: 0.8rem; color: var(--text-muted); background: var(--brand-light); color: var(--brand); padding: 2px 8px; border-radius: 12px; font-weight: 600; }
+
+    /* Map Box */
+    .map-container { width: 100%; height: 200px; background: #e5e7eb; border-radius: var(--radius); overflow: hidden; margin-bottom: 24px; position: relative; }
+
+    /* Orders View Elements */
+    .live-order-card { background: linear-gradient(135deg, var(--brand), #4338ca); color: white; border-radius: var(--radius); padding: 20px; margin-bottom: 24px; box-shadow: 0 10px 25px rgba(37,99,235,0.3); }
+    .live-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 0.85rem; font-weight: 600; }
+    .live-badge { background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px; }
+    .pulse-dot { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(74, 222, 128, 0); } 100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); } }
+    .live-eta { font-size: 2.5rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; margin-bottom: 4px; }
+    
+    .history-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 12px; }
+    .history-header { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); }
+    .history-title { font-weight: 600; font-size: 1rem; color: var(--text-main); }
+    .history-actions { display: flex; gap: 8px; }
+    .btn { padding: 10px 16px; border-radius: 8px; border: none; font-weight: 600; font-size: 0.9rem; cursor: pointer; flex: 1; }
+    .btn-primary { background: var(--brand); color: white; }
+    .btn-secondary { background: var(--brand-light); color: var(--brand); }
+    
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+    .empty-state span { font-size: 3rem; display: block; margin-bottom: 12px; }
+
+    /* Modal */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(4px); }
+    .modal-overlay.open { display: flex; animation: fadeIn 0.2s; }
+    .modal { background: var(--surface); width: 100%; max-width: 600px; border-radius: 24px 24px 0 0; padding: 24px; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .modal h2 { margin-bottom: 20px; font-size: 1.5rem; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; color: var(--text-muted); }
+    .form-input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; outline: none; }
+    .form-input:focus { border-color: var(--brand); }
+    
+    /* Toast */
+    .toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-20px); background: #10b981; color: white; padding: 12px 24px; border-radius: 30px; font-weight: 600; box-shadow: 0 4px 12px rgba(16,185,129,0.3); z-index: 2000; opacity: 0; transition: all 0.3s; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Bottom Nav */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 12px 0; padding-bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 100; max-width: 600px; margin: 0 auto; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; gap: 4px; transition: color 0.2s; }
+    .nav-item.active { color: var(--brand); }
+    .nav-icon { font-size: 1.4rem; }
+    
+    .spinner { border: 3px solid rgba(0,0,0,0.1); width: 24px; height: 24px; border-radius: 50%; border-left-color: var(--brand); animation: spin 1s linear infinite; display: inline-block; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">ServeNow</div>
+    <div id="auth-section">
+      <button class="auth-btn" onclick="signIn()">Sign in with Google</button>
+      <div class="user-profile" id="user-profile">
+        <img id="user-avatar" src="" alt="Avatar">
+        <span id="user-name"></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- HOME VIEW -->
+  <main id="home" class="view active container">
+    <input type="text" class="search-bar" id="search-input" placeholder="Search services (e.g., Ironing, Repair)...">
+    
+    <h2 class="section-title">Quick Services</h2>
+    <div class="service-grid" id="service-grid">
+      <!-- Injected via JS -->
+    </div>
+
+    <h2 class="section-title">Live Service Map</h2>
+    <div class="map-container" id="map">
+      <!-- Google Map iframe injected via JS -->
+    </div>
+  </main>
+
+  <!-- ORDERS VIEW -->
+  <main id="orders" class="view container">
+    <h2 class="section-title">Live Order</h2>
+    <div id="live-order-container">
+      <div class="empty-state">
+        <span>📦</span>
+        <p>No active orders.</p>
+      </div>
+    </div>
+
+    <h2 class="section-title" style="margin-top: 32px;">Order History</h2>
+    <div id="history-orders-container">
+      <div style="text-align:center; padding: 20px;"><div class="spinner"></div></div>
+    </div>
+  </main>
+
+  <!-- Booking Modal -->
+  <div class="modal-overlay" id="booking-modal">
+    <div class="modal">
+      <h2 id="modal-service-name">Book Service</h2>
+      <div class="form-group">
+        <label>Service</label>
+        <input type="text" class="form-input" id="modal-service" readonly style="background:var(--bg);color:var(--text-muted)">
+      </div>
+      <div class="form-group">
+        <label>Pickup Address</label>
+        <input type="text" class="form-input" id="modal-address" placeholder="e.g. 42, Sector 15, Noida" required>
+      </div>
+      <div class="form-group">
+        <label>Preferred Date & Time</label>
+        <input type="datetime-local" class="form-input" id="modal-datetime" required>
+      </div>
+      <div style="display:flex; gap: 12px; margin-top: 24px;">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="confirmBooking()">Confirm Booking</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">Order Placed Successfully!</div>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <a href="#home" class="nav-item active" id="nav-home">
+      <span class="nav-icon">🏠</span>
+      <span>Home</span>
+    </a>
+    <a href="#orders" class="nav-item" id="nav-orders">
+      <span class="nav-icon">📋</span>
+      <span>Orders</span>
+    </a>
+  </nav>
+
+  <!-- 1. FIREBASE CDNS (v9 Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+  <!-- 2. GOOGLE MAPS API -->
+  <script>
+    // PLACEHOLDER API KEY
+    const MAPS_API_KEY = "REPLACE_WITH_YOUR_KEY"; 
+    
+    // We append the script inside DOMContentLoaded or directly.
+    // For Hackathon prototype, we can use an iframe fallback if API key is invalid
+  </script>
+
+  <!-- 3. APPLICATION LOGIC -->
+  <script>
+    // --- FIREBASE CONFIG (REPLACE WITH YOUR CONFIG) ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyFakeKeyPlaceholderForHackathon",
+      authDomain: "servenow-hackathon.firebaseapp.com",
+      projectId: "servenow-hackathon",
+      storageBucket: "servenow-hackathon.appspot.com",
+      messagingSenderId: "1234567890",
+      appId: "1:1234567890:web:abcdef123456"
+    };
+
+    // --- MOCK FIREBASE FOR LOCAL DEMO IF CONFIG IS INVALID ---
+    // In a real environment, you'd initialize Firebase. 
+    // If the API key is a placeholder, we use an in-memory mock to ensure the demo works out-of-the-box.
+    let db, auth, currentUser = null;
+    let mockOrders = [];
+    const isMock = firebaseConfig.apiKey.includes("FakeKey");
+
+    if (!isMock) {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.firestore();
+      auth = firebase.auth();
+    } else {
+      console.warn("Using Mock Firebase. Replace firebaseConfig to use real Firestore.");
+      auth = {
+        onAuthStateChanged: (cb) => cb(currentUser),
+        signInWithPopup: async () => { currentUser = { uid: "user123", displayName: "Hackathon Judge", photoURL: "https://i.pravatar.cc/150?u=judge" }; auth.onAuthStateChangedCb(currentUser); },
+        onAuthStateChangedCb: () => {}
+      };
+      auth.onAuthStateChanged = (cb) => { auth.onAuthStateChangedCb = cb; cb(currentUser); };
+      
+      // Mock Firestore
+      db = {
+        collection: () => ({
+          add: async (doc) => { 
+            const newDoc = { id: 'ORD-' + Math.floor(Math.random()*90000), ...doc };
+            mockOrders.unshift(newDoc); 
+            if(window.onMockDataChanged) window.onMockDataChanged();
+            return newDoc; 
+          },
+          where: () => ({
+            orderBy: () => ({
+              onSnapshot: (cb) => {
+                window.onMockDataChanged = () => cb({ docs: mockOrders.map(data => ({ id: data.id, data: () => data })) });
+                window.onMockDataChanged();
+              }
+            })
+          })
+        })
+      };
+    }
+
+    // --- AUTHENTICATION ---
+    function signIn() {
+      if(isMock) { auth.signInWithPopup(); return; }
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider).catch(err => console.error(err));
+    }
+
+    auth.onAuthStateChanged((user) => {
+      const btn = document.querySelector('.auth-btn');
+      const profile = document.getElementById('user-profile');
+      if (user) {
+        currentUser = user;
+        btn.style.display = 'none';
+        profile.style.display = 'flex';
+        document.getElementById('user-avatar').src = user.photoURL || 'https://i.pravatar.cc/150';
+        document.getElementById('user-name').textContent = user.displayName;
+        fetchOrders();
+      } else {
+        currentUser = null;
+        btn.style.display = 'block';
+        profile.style.display = 'none';
+        document.getElementById('history-orders-container').innerHTML = `<div class="empty-state"><span>🔒</span><p>Sign in to view your orders.</p></div>`;
+      }
+    });
+
+    // --- DATA & UI STATE ---
+    const SERVICES = [
+      { id: 's1', name: 'Ironing', emoji: '👕', time: '30 min', price: 25 },
+      { id: 's2', name: 'Dry Cleaning', emoji: '✨', time: '24 hrs', price: 299 },
+      { id: 's3', name: 'Shoe Repair', emoji: '👟', time: '2 hrs', price: 149 },
+      { id: 's4', name: 'Laundry', emoji: '🫧', time: '24 hrs', price: 69 },
+      { id: 's5', name: 'Tailoring', emoji: '✂️', time: '1-2 days', price: 99 },
+      { id: 's6', name: 'Watch Repair', emoji: '⌚', time: '1 hr', price: 199 },
+    ];
+
+    let selectedService = null;
+    let liveOrderEtaInterval = null;
+
+    // Render Home Services
+    function renderServices(filter = "") {
+      const grid = document.getElementById('service-grid');
+      const filtered = SERVICES.filter(s => s.name.toLowerCase().includes(filter.toLowerCase()));
+      grid.innerHTML = filtered.map(s => `
+        <div class="service-card" onclick="openModal('${s.id}')">
+          <div class="service-icon">${s.emoji}</div>
+          <div class="service-name">${s.name}</div>
+          <div class="service-time">${s.time}</div>
+        </div>
+      `).join('');
+    }
+
+    // Search Handler
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      renderServices(e.target.value);
+    });
+
+    // --- MODAL & BOOKING FLOW ---
+    function openModal(serviceId) {
+      if (!currentUser) {
+        alert("Please Sign In to book a service!");
+        return;
+      }
+      selectedService = SERVICES.find(s => s.id === serviceId);
+      document.getElementById('modal-service').value = `${selectedService.emoji} ${selectedService.name} (₹${selectedService.price})`;
+      
+      // Auto-fill datetime to now + 30 mins
+      const now = new Date();
+      now.setMinutes(now.getMinutes() + 30);
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      document.getElementById('modal-datetime').value = now.toISOString().slice(0,16);
+      
+      document.getElementById('booking-modal').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('booking-modal').classList.remove('open');
+    }
+
+    async function confirmBooking() {
+      const address = document.getElementById('modal-address').value;
+      const datetime = document.getElementById('modal-datetime').value;
+      if(!address || !datetime) return alert("Please fill all fields");
+
+      const btn = document.querySelector('.modal .btn-primary');
+      btn.textContent = "Processing...";
+      btn.disabled = true;
+
+      const orderData = {
+        service: selectedService.name,
+        emoji: selectedService.emoji,
+        price: selectedService.price,
+        address: address,
+        datetime: datetime,
+        status: "Pending",
+        userId: currentUser.uid,
+        timestamp: new Date().getTime(),
+        eta: Math.floor(Math.random() * 15) + 15 // Random ETA 15-30 mins
+      };
+
+      try {
+        await db.collection("orders").add(orderData);
+        closeModal();
+        showToast();
+        // Clear form
+        document.getElementById('modal-address').value = "";
+        btn.textContent = "Confirm Booking";
+        btn.disabled = false;
+        // Auto navigate to orders
+        window.location.hash = "#orders";
+      } catch (err) {
+        console.error("Error booking: ", err);
+        btn.textContent = "Confirm Booking";
+        btn.disabled = false;
+      }
+    }
+
+    function showToast() {
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // --- FIRESTORE REAL-TIME ORDERS ---
+    let unsubscribeOrders = null;
+
+    function fetchOrders() {
+      if(unsubscribeOrders) unsubscribeOrders();
+      if(!currentUser) return;
+
+      const ordersRef = db.collection("orders").where("userId", "==", currentUser.uid).orderBy("timestamp", "desc");
+      
+      unsubscribeOrders = ordersRef.onSnapshot(snapshot => {
+        const allOrders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderOrders(allOrders);
+      });
+    }
+
+    function renderOrders(orders) {
+      const liveContainer = document.getElementById('live-order-container');
+      const historyContainer = document.getElementById('history-orders-container');
+      
+      // Find the first "Pending" or "Picked Up" order
+      const liveOrderIndex = orders.findIndex(o => o.status === "Pending" || o.status === "Picked Up");
+      const liveOrder = liveOrderIndex > -1 ? orders[liveOrderIndex] : null;
+      
+      // History is everything else
+      const historyOrders = orders.filter((_, i) => i !== liveOrderIndex);
+
+      // Render Live Order
+      if (liveOrder) {
+        liveContainer.innerHTML = `
+          <div class="live-order-card">
+            <div class="live-header">
+              <div class="live-badge"><span class="pulse-dot"></span> Live Tracking</div>
+              <div>#${liveOrder.id.slice(0,8).toUpperCase()}</div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+              <div>
+                <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 4px;">Arriving in</div>
+                <div class="live-eta" id="live-eta-display">${liveOrder.eta}:00</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:2rem; margin-bottom:4px;">${liveOrder.emoji}</div>
+                <div style="font-weight:600;">${liveOrder.service}</div>
+              </div>
+            </div>
+            <button class="btn" style="width:100%; margin-top:16px; background:rgba(255,255,255,0.2); color:white;" onclick="trackOrder('${liveOrder.address}')">📍 Track on Map</button>
+          </div>
+        `;
+        startEtaTimer(liveOrder.eta);
+      } else {
+        liveContainer.innerHTML = `<div class="empty-state"><span>📦</span><p>No active orders.</p></div>`;
+        if(liveOrderEtaInterval) clearInterval(liveOrderEtaInterval);
+      }
+
+      // Render History
+      if (historyOrders.length > 0) {
+        historyContainer.innerHTML = historyOrders.map(o => `
+          <div class="history-card">
+            <div class="history-header">
+              <span>${new Date(o.timestamp).toLocaleDateString()}</span>
+              <span style="color:${o.status==='Delivered' ? 'var(--success)' : 'var(--text-muted)'}; font-weight:600;">${o.status}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div class="history-title">${o.emoji} ${o.service}</div>
+              <div style="font-weight:700;">₹${o.price}</div>
+            </div>
+            <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:8px;">📍 ${o.address}</div>
+            <div class="history-actions">
+              <button class="btn btn-secondary" onclick="reorder('${o.id}')">↺ Reorder</button>
+            </div>
+          </div>
+        `).join('');
+      } else {
+        historyContainer.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:0.9rem;">No past orders.</p>`;
+      }
+    }
+
+    // --- REORDER LOGIC ---
+    function reorder(orderId) {
+      if(!currentUser) return;
+      alert("Opening booking flow for this service...");
+      // A quick hack for the hackathon prototype: open the booking modal for the first service to simulate it
+      openModal('s1');
+    }
+
+    function trackOrder(address) {
+      // In a real app, open native maps or show full screen modal
+      window.open(`https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=14&ie=UTF8&iwloc=`, '_blank');
+    }
+
+    // --- ETA TIMER (MICRO-INTERACTION) ---
+    function startEtaTimer(startMinutes) {
+      if(liveOrderEtaInterval) clearInterval(liveOrderEtaInterval);
+      let totalSeconds = startMinutes * 60;
+      
+      liveOrderEtaInterval = setInterval(() => {
+        if(totalSeconds <= 0) {
+          clearInterval(liveOrderEtaInterval);
+          const el = document.getElementById('live-eta-display');
+          if(el) el.textContent = "Arrived";
+          // We could update Firestore status to "Delivered" here
+          return;
+        }
+        totalSeconds--;
+        const m = Math.floor(totalSeconds / 60);
+        const s = totalSeconds % 60;
+        const el = document.getElementById('live-eta-display');
+        if(el) el.textContent = `${m}:${s.toString().padStart(2, '0')}`;
+      }, 1000); // Ticks every 1 second
+    }
+
+    // --- GOOGLE MAPS INJECTION (HOME PAGE) ---
+    function initMapIframe() {
+      // If API key is not provided, use an iframe as a robust fallback for the demo
+      const mapContainer = document.getElementById('map');
+      mapContainer.innerHTML = `<iframe 
+        width="100%" 
+        height="100%" 
+        style="border:0;" 
+        loading="lazy" 
+        allowfullscreen 
+        src="https://maps.google.com/maps?q=New+Delhi&t=&z=12&ie=UTF8&iwloc=&output=embed">
+      </iframe>`;
+    }
+
+    // --- ROUTER (Hash Change) ---
+    function handleRoute() {
+      const hash = window.location.hash || '#home';
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      
+      const targetView = document.querySelector(hash);
+      const targetNav = document.querySelector(`.nav-item[href="${hash}"]`);
+      
+      if(targetView) targetView.classList.add('active');
+      if(targetNav) targetNav.classList.add('active');
+
+      window.scrollTo(0,0);
+    }
+
+    window.addEventListener('hashchange', handleRoute);
+
+    // --- INITIALIZATION ---
+    window.onload = () => {
+      renderServices();
+      handleRoute();
+      initMapIframe(); // Init Map
+    };
+  </script>
+</body>
+</html>
