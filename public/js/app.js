@@ -398,4 +398,6 @@ function showNotifToast() {
 }
 
 /* ─── Init after ALL scripts load (avoids race with page registration) ─── */
-window.addEventListener('load', () => App.init());
+window.addEventListener('load', () => {
+  setTimeout(() => App.init(), 0);
+});
