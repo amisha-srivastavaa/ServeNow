@@ -1,0 +1,282 @@
+/* ═══════════════════════════════════════════
+   ServeNow — senior.css
+   Senior Mode overrides: large fonts, high-contrast,
+   big buttons, simplified nav, always-visible mic
+   ═══════════════════════════════════════════ */
+
+/* ─── Senior Mode Body Class ─── */
+body.senior-mode {
+  --text-primary: #0A0A0A;
+  --text-secondary: #1A1A1A;
+  --text-muted: #3A3A3A;
+  --brand: #007A75;
+  --brand-dark: #005C58;
+  --bg: #F0F8F7;
+  --surface: #FFFFFF;
+  --border: #B0CECC;
+  --border-light: #C8DCDA;
+  font-size: 18px;
+}
+
+/* ─── Large Font Scale ─── */
+body.senior-mode .section-title,
+body.senior-mode h1, body.senior-mode h2, body.senior-mode h3 {
+  font-size: 1.5em !important;
+  line-height: 1.3 !important;
+}
+body.senior-mode p,
+body.senior-mode span,
+body.senior-mode label,
+body.senior-mode .service-name,
+body.senior-mode .cat-name,
+body.senior-mode .nav-label,
+body.senior-mode .form-label {
+  font-size: 1.1rem !important;
+  line-height: 1.6 !important;
+}
+body.senior-mode .text-xs,
+body.senior-mode .text-sm {
+  font-size: 0.95rem !important;
+}
+
+/* ─── Big Touch Targets ─── */
+body.senior-mode .btn-primary,
+body.senior-mode .btn-secondary,
+body.senior-mode .btn-accent {
+  min-height: 64px !important;
+  font-size: 1.2rem !important;
+  border-radius: 20px !important;
+  padding: 16px 24px !important;
+}
+body.senior-mode .btn-add {
+  font-size: 1rem !important;
+  padding: 10px 18px !important;
+  border-radius: 14px !important;
+}
+body.senior-mode .btn-icon {
+  width: 52px !important;
+  height: 52px !important;
+}
+body.senior-mode .btn-icon svg {
+  width: 26px !important;
+  height: 26px !important;
+}
+
+/* ─── Category Cards ─── */
+body.senior-mode .category-card {
+  padding: 20px 12px !important;
+  border-radius: 16px !important;
+  border-width: 2px !important;
+  border-color: var(--border) !important;
+}
+body.senior-mode .category-grid {
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 16px !important;
+}
+body.senior-mode .cat-icon-wrap {
+  width: 70px !important;
+  height: 70px !important;
+  font-size: 2.4rem !important;
+}
+body.senior-mode .cat-name {
+  font-size: 1rem !important;
+}
+
+/* ─── Service Cards ─── */
+body.senior-mode .service-card-inner {
+  padding: 20px !important;
+  gap: 16px !important;
+}
+body.senior-mode .service-icon-box {
+  width: 72px !important;
+  height: 72px !important;
+  font-size: 2.2rem !important;
+}
+body.senior-mode .service-name { font-size: 1.15rem !important; }
+body.senior-mode .service-price { font-size: 1.3rem !important; }
+
+/* ─── Nav Override ─── */
+body.senior-mode #bottom-nav { display: none !important; }
+body.senior-mode #senior-nav { display: flex !important; }
+
+/* ─── Senior Bottom Nav ─── */
+.senior-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--max-w);
+  height: 88px;
+  background: var(--surface);
+  border-top: 3px solid var(--brand);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 50;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.10);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.senior-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: var(--sp-2) 0;
+  color: var(--text-secondary);
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: all var(--t-fast);
+  min-height: 100%;
+}
+.senior-nav-item:active { transform: scale(0.94); }
+.senior-nav-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-3);
+  transition: all var(--t-fast);
+}
+.senior-nav-item:hover .senior-nav-icon { background: var(--brand-light); color: var(--brand-dark); }
+.senior-nav-item.active .senior-nav-icon {
+  background: var(--brand);
+  color: white;
+  box-shadow: var(--shadow-brand);
+}
+.senior-help-nav .senior-nav-icon {
+  background: var(--accent-light);
+  color: var(--accent-dark);
+}
+.senior-help-nav:hover .senior-nav-icon {
+  background: var(--accent);
+  color: white;
+}
+.senior-nav-label {
+  font-size: 0.9rem !important;
+  font-weight: var(--fw-bold) !important;
+  color: var(--text-secondary);
+}
+.senior-nav-item.active .senior-nav-label { color: var(--brand); }
+
+/* ─── Voice FAB (Senior) ─── */
+.voice-fab {
+  position: fixed;
+  right: 20px;
+  bottom: calc(88px + 20px);
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: var(--gradient-brand);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-brand);
+  z-index: 60;
+  transition: all var(--t-fast);
+  animation: floatUp 2s ease-in-out infinite alternate;
+}
+body:not(.senior-mode) .voice-fab { display: none !important; }
+.voice-fab:hover { transform: scale(1.1); box-shadow: 0 8px 30px rgba(0,181,173,0.5); }
+.voice-fab:active { transform: scale(0.94); }
+.voice-fab svg {
+  width: 30px !important;
+  height: 30px !important;
+}
+
+/* ─── Senior High Contrast Cards ─── */
+body.senior-mode .card,
+body.senior-mode .service-card,
+body.senior-mode .order-history-card {
+  border-width: 2px !important;
+  border-color: var(--border) !important;
+}
+body.senior-mode .service-desc { display: none !important; } /* simplify */
+
+/* ─── Senior Top Bar ─── */
+body.senior-mode .top-bar { height: 68px !important; padding: 0 20px !important; }
+body.senior-mode .location-name { font-size: 1.05rem !important; font-weight: 800 !important; }
+body.senior-mode .location-label { font-size: 0.75rem !important; }
+
+/* ─── Senior Main Content ─── */
+body.senior-mode .main-content {
+  padding-top: 68px !important;
+  padding-bottom: calc(88px + var(--sp-4)) !important;
+}
+
+/* ─── Senior hero ─── */
+body.senior-mode .hero-title { font-size: 1.8rem !important; }
+body.senior-mode .hero-sub { font-size: 1rem !important; }
+
+/* ─── Senior Search Bar ─── */
+body.senior-mode .hero-search {
+  padding: 16px 20px !important;
+  border-radius: 20px !important;
+}
+body.senior-mode .hero-search span { font-size: 1rem !important; }
+
+/* ─── Senior Time/Rating ─── */
+body.senior-mode .time-badge,
+body.senior-mode .rating-value,
+body.senior-mode .rating-count {
+  font-size: 0.9rem !important;
+}
+body.senior-mode .rating-star { font-size: 1rem !important; }
+
+/* ─── Senior Section Headers ─── */
+body.senior-mode .section-header h2 { font-size: 1.4rem !important; }
+body.senior-mode .section-header a,
+body.senior-mode .section-header .link-btn { font-size: 1rem !important; }
+
+/* ─── Senior Chip Row ─── */
+body.senior-mode .chip {
+  font-size: 0.9rem !important;
+  padding: 8px 16px !important;
+  border-radius: 12px !important;
+}
+
+/* ─── Senior Cart ─── */
+body.senior-mode .cart-item-name { font-size: 1rem !important; }
+body.senior-mode .cart-item-price { font-size: 0.9rem !important; }
+body.senior-mode .qty-btn { width: 36px !important; height: 36px !important; font-size: 1.2rem !important; }
+body.senior-mode .qty-value { font-size: 1rem !important; }
+
+/* ─── Senior Mode Toggle Indicator ─── */
+.senior-mode-active-bar {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--max-w);
+  height: 3px;
+  background: var(--brand);
+  z-index: 999;
+  display: none;
+}
+body.senior-mode .senior-mode-active-bar { display: block; }
+
+/* ─── Senior Order History ─── */
+body.senior-mode .order-history-card { padding: 0 !important; }
+body.senior-mode .order-history-header { padding: 16px 20px !important; }
+body.senior-mode .order-history-body { padding: 20px !important; }
+body.senior-mode .order-history-item { font-size: 1rem !important; gap: 12px !important; }
+body.senior-mode .order-history-item-icon { font-size: 1.5rem !important; }
+body.senior-mode .reorder-action-btn {
+  font-size: 1rem !important;
+  padding: 10px 20px !important;
+}
+
+/* ─── Senior Stepper ─── */
+body.senior-mode .stepper-dot { width: 48px !important; height: 48px !important; font-size: 1.4rem !important; }
+body.senior-mode .stepper-item:not(:last-child)::before { left: 23px !important; top: 48px !important; }
+body.senior-mode .stepper-title { font-size: 1.1rem !important; }
+body.senior-mode .stepper-time { font-size: 0.9rem !important; }

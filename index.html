@@ -237,6 +237,35 @@
       color: var(--text-main);
     }
 
+    /* ═══ How It Works ═══ */
+    .how-it-works {
+      margin-top: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .how-steps {
+      display: grid;
+      gap: 0.75rem;
+    }
+    .how-step {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.875rem 1rem;
+    }
+    .how-step-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .how-step-text {
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--text-main);
+    }
+
     /* ═══ Orders — Live Card & History ═══ */
     .live-order-card {
       background: linear-gradient(135deg, var(--brand) 0%, #009688 60%, #00796B 100%);
@@ -572,6 +601,22 @@
       </div>
     </div>
     <div class="provider-legend" id="provider-legend"></div>
+
+    <h2 class="section-title how-it-works">How It Works</h2>
+    <div class="how-steps">
+      <div class="how-step">
+        <span class="how-step-icon">📍</span>
+        <span class="how-step-text">Enter your location</span>
+      </div>
+      <div class="how-step">
+        <span class="how-step-icon">🛠️</span>
+        <span class="how-step-text">Choose a service</span>
+      </div>
+      <div class="how-step">
+        <span class="how-step-icon">🚀</span>
+        <span class="how-step-text">Get it done in minutes</span>
+      </div>
+    </div>
   </main>
 
   <!-- ═══ ORDERS VIEW ═══ -->
@@ -745,35 +790,48 @@
         liveOrderId = null;
         stopEtaTimer();
         renderOrdersEmpty();
+        updateHomeMap(null);
       }
     });
 
     document.getElementById('sign-in-btn').addEventListener('click', signIn);
 
     // ─── FIRESTORE: Real-time orders listener ───
-    function subscribeOrders() {
-      if (!currentUser) return;
+    function fetchOrders() {
+      if (!currentUser) {
+        renderOrdersEmpty();
+        return;
+      }
       if (unsubscribeOrders) unsubscribeOrders();
 
       showOrdersSkeleton();
 
-      unsubscribeOrders = db.collection('orders')
-        .where('userId', '==', currentUser.uid)
-        .onSnapshot(
-          function (snapshot) {
-            allOrders = snapshot.docs
-              .map(function (doc) { return Object.assign({ id: doc.id }, doc.data()); })
-              .sort(function (a, b) { return (b.timestamp || 0) - (a.timestamp || 0); });
-            renderOrders(allOrders);
-          },
-          function (err) {
-            console.error('Orders listener error:', err);
-            document.getElementById('history-orders-container').innerHTML =
-              '<div class="empty-state"><span class="emoji">⚠️</span><p>Could not load orders. Check Firestore rules &amp; index.</p></div>';
-            showToast('Firestore error — see console', true);
-          }
-        );
+      try {
+        unsubscribeOrders = db.collection('orders')
+          .where('userId', '==', currentUser.uid)
+          .onSnapshot(
+            function (snapshot) {
+              allOrders = snapshot.docs
+                .map(function (doc) { return Object.assign({ id: doc.id }, doc.data()); })
+                .sort(function (a, b) { return (b.timestamp || 0) - (a.timestamp || 0); });
+              renderOrders(allOrders);
+            },
+            function (err) {
+              console.error('Orders listener error:', err);
+              document.getElementById('history-orders-container').innerHTML =
+                '<div class="empty-state"><span class="emoji">⚠️</span><p>Failed to load orders. Please check your internet connection.</p></div>';
+              showToast('Failed to load orders. Please check your internet connection.', true);
+            }
+          );
+      } catch (err) {
+        console.error('fetchOrders error:', err);
+        document.getElementById('history-orders-container').innerHTML =
+          '<div class="empty-state"><span class="emoji">⚠️</span><p>Failed to load orders. Please check your internet connection.</p></div>';
+        showToast('Failed to load orders. Please check your internet connection.', true);
+      }
     }
+
+    function subscribeOrders() { fetchOrders(); }
 
     function showOrdersSkeleton() {
       document.getElementById('history-orders-container').innerHTML =
@@ -786,8 +844,13 @@
     function renderOrdersEmpty() {
       document.getElementById('live-order-container').innerHTML =
         '<div class="empty-state"><span class="emoji">📦</span><p>No active orders.</p></div>';
-      document.getElementById('history-orders-container').innerHTML =
-        '<div class="empty-state"><span class="emoji">🔒</span><p>Sign in to view your orders.</p></div>';
+      if (!currentUser) {
+        document.getElementById('history-orders-container').innerHTML =
+          '<div class="empty-state"><span class="emoji">🔒</span><p>Sign in to view your orders.</p></div>';
+      } else {
+        document.getElementById('history-orders-container').innerHTML =
+          '<div class="empty-state"><span class="emoji">📝</span><p>No past orders yet.</p></div>';
+      }
     }
 
     // ─── ORDERS UI: Live card + History ───
@@ -824,17 +887,19 @@
                 '<div style="font-size:0.85rem;opacity:0.9;">₹' + (liveOrder.price || 0) + '</div>' +
               '</div>' +
             '</div>' +
-            '<button class="btn-track" type="button" data-track-id="' + escapeHtml(liveOrder.id) + '">📍 Track on Map</button>' +
+            '<button class="btn-track" type="button">Track →</button>' +
           '</div>';
 
         liveContainer.querySelector('.btn-track').addEventListener('click', function () {
-          openTrackModal(liveOrder);
+          trackOrder(liveOrder.address);
         });
 
+        updateHomeMap(liveOrder.address);
         startEtaTimer(liveOrderId, liveOrderEta);
       } else {
         liveOrderId = null;
         stopEtaTimer();
+        updateHomeMap(null);
         liveContainer.innerHTML =
           '<div class="empty-state"><span class="emoji">📦</span><p>No active orders.</p></div>';
       }
@@ -867,8 +932,17 @@
         });
       } else {
         historyContainer.innerHTML =
-          '<p style="text-align:center;color:var(--text-muted);font-size:0.9rem;padding:1rem 0;">No past orders yet.</p>';
+          '<div class="empty-state" style="padding:1rem 0;"><span class="emoji">📝</span><p>No past orders yet.</p></div>';
       }
+    }
+
+    function trackOrder(address) {
+      var dest = (address || '').trim() || 'New Delhi, India';
+      window.open(
+        'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(dest),
+        '_blank',
+        'noopener'
+      );
     }
 
     // ─── ETA MICRO-INTERACTION: −1 min every 60 seconds ───
@@ -899,11 +973,19 @@
     }
 
     function markDelivered(orderId) {
-      db.collection('orders').doc(orderId).update({ status: 'Delivered', eta: 0 })
-        .then(function () {
-          document.getElementById('delivered-popup').classList.add('open');
-        })
-        .catch(function (err) { console.error('Delivered update failed:', err); });
+      try {
+        db.collection('orders').doc(orderId).update({ status: 'Delivered', eta: 0 })
+          .then(function () {
+            document.getElementById('delivered-popup').classList.add('open');
+          })
+          .catch(function (err) {
+            console.error('Delivered update failed:', err);
+            showToast('Failed to update order. Please check your internet connection.', true);
+          });
+      } catch (err) {
+        console.error('Delivered update failed:', err);
+        showToast('Failed to update order. Please check your internet connection.', true);
+      }
     }
 
     document.getElementById('close-delivered-btn').addEventListener('click', function () {
@@ -971,7 +1053,7 @@
         window.location.hash = '#orders';
       } catch (err) {
         console.error('Booking error:', err);
-        showToast('Booking failed — check Firestore rules', true);
+        showToast('Failed to place order. Please check your internet connection.', true);
       } finally {
         btn.textContent = 'Confirm Booking';
         btn.disabled = false;
@@ -1008,7 +1090,7 @@
         window.location.hash = '#orders';
       } catch (err) {
         console.error('Reorder error:', err);
-        showToast('Reorder failed', true);
+        showToast('Failed to reorder. Please check your internet connection.', true);
       } finally {
         if (btn) { btn.textContent = '↺ Reorder'; btn.disabled = false; }
       }
@@ -1054,8 +1136,28 @@
 
     function showMapFallback() {
       document.getElementById('home-map').style.display = 'none';
-      document.getElementById('map-fallback').classList.remove('hidden');
+      document.getElementById('map-fallback').classList.add('hidden');
+      updateHomeMap(null);
       renderProviderLegend();
+    }
+
+    function updateHomeMap(address) {
+      if (mapsReady) return;
+
+      var mapEl = document.getElementById('home-map');
+      if (!mapEl) return;
+
+      var query = (address || '').trim() || 'New Delhi, India';
+      var embedUrl = 'https://maps.google.com/maps?q=' + encodeURIComponent(query) +
+        '&t=&z=14&ie=UTF8&iwloc=&output=embed';
+
+      var iframe = mapEl.querySelector('iframe');
+      if (!iframe) {
+        mapEl.style.display = 'block';
+        mapEl.innerHTML = '<iframe width="100%" height="100%" style="border:0;" loading="lazy" allowfullscreen src="' + embedUrl + '"></iframe>';
+      } else if (iframe.src !== embedUrl) {
+        iframe.src = embedUrl;
+      }
     }
 
     // ─── GOOGLE MAPS: Track modal ───
@@ -1240,6 +1342,7 @@
     renderServices();
     handleRoute();
     renderProviderLegend();
+    updateHomeMap(null);
   </script>
 </body>
 </html>
