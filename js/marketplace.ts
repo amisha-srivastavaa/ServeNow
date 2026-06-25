@@ -1,3 +1,6 @@
+// @ts-nocheck
+import { DATA } from './data.ts';
+import { App } from './app.ts';
 /* ═══════════════════════════════════════════
    ServeNow — marketplace.js
    Home, category, service list, checkout flow,
@@ -12,6 +15,11 @@ function stars(rating) {
   for (let i = 0; i < full; i++) s += '★';
   if (half) s += '½';
   return s;
+}
+
+/* ─── Search focus ─── */
+function focusSearch() {
+  showToast('🔍 Search coming soon!');
 }
 
 /* ═══════════════ HOME PAGE ═══════════════ */
@@ -82,11 +90,11 @@ function renderHome(container) {
         </div>
         <div class="quick-reorder-scroll">
           ${DATA.orders.map(o => o.items.map(item => `
-            <div class="reorder-card" onclick="App.navigate('category',{id:'ironing'})">
+            <div class="reorder-card" onclick="window.reorderHistory('${o.id}')">
               <div class="reorder-icon">${item.emoji}</div>
               <div class="reorder-name">${item.name.split(' ×')[0]}</div>
               <div class="reorder-price">₹${item.price}</div>
-              <button class="reorder-btn" onclick="event.stopPropagation();showToast('Added to cart! 🎉')">Reorder</button>
+              <button class="reorder-btn" onclick="event.stopPropagation();window.reorderHistory('${o.id}')">Reorder</button>
             </div>
           `).join('')).join('')}
         </div>
@@ -241,10 +249,10 @@ function renderCategoryAction(svcId, catId) {
 }
 
 /* ═══════════════ CHECKOUT PAGE ═══════════════ */
-let checkoutStep = 0;
-let selectedDate = 0;
-let selectedSlot = 0;
-let selectedPayment = 'upi';
+window.checkoutStep = 0;
+window.selectedDate = 0;
+window.selectedSlot = 0;
+window.selectedPayment = 'upi';
 
 /* FIX #1 — slots defined at module scope so placeOrder can access it */
 const PICKUP_SLOTS = [
@@ -268,7 +276,7 @@ function renderCheckout(container) {
     return;
   }
 
-  checkoutStep = 0;
+  window.checkoutStep = 0;
   renderCheckoutStep(container);
 }
 
@@ -293,8 +301,8 @@ function renderCheckoutStep(container) {
     <!-- Progress -->
     <div class="checkout-progress">
       ${steps.map((s, i) => `
-      <div class="progress-step ${i < checkoutStep ? 'done' : i === checkoutStep ? 'active' : ''}">
-        <div class="step-dot">${i < checkoutStep ? '✓' : i + 1}</div>
+      <div class="progress-step ${i < window.checkoutStep ? 'done' : i === window.checkoutStep ? 'active' : ''}">
+        <div class="step-dot">${i < window.checkoutStep ? '✓' : i + 1}</div>
         <div class="step-label">${s}</div>
       </div>`).join('')}
     </div>
@@ -313,21 +321,21 @@ function renderCheckoutStep(container) {
     </div>
 
     <!-- Step 0: Slot Picker -->
-    ${checkoutStep === 0 ? `
+    ${window.checkoutStep === 0 ? `
     <div class="checkout-section">
       <h3><span>📅</span> Choose Pickup Slot</h3>
       <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Select your preferred date and time for pickup.</p>
       <div class="date-scroll">
         ${dates.map((d, i) => `
-          <div class="date-chip ${i === selectedDate ? 'selected' : ''}" onclick="selectedDate=${i};document.querySelectorAll('.date-chip').forEach((el,j)=>el.classList.toggle('selected',j===${i}))">
+          <div class="date-chip ${i === window.selectedDate ? 'selected' : ''}" onclick="window.selectedDate=${i};document.querySelectorAll('.date-chip').forEach((el,j)=>el.classList.toggle('selected',j===${i}))">
             <span class="date-day">${i === 0 ? 'Today' : d.day}</span>
             <span class="date-num">${d.num}</span>
           </div>`).join('')}
       </div>
       <div class="time-slots">
         ${slots.map((s, i) => `
-          <div class="time-slot ${i === selectedSlot ? 'selected' : ''} ${!s.avail ? 'unavailable' : ''}"
-               onclick="${s.avail ? `selectedSlot=${i};document.querySelectorAll('.time-slot').forEach((el,j)=>el.classList.toggle('selected',j===${i}))` : ''}">
+          <div class="time-slot ${i === window.selectedSlot ? 'selected' : ''} ${!s.avail ? 'unavailable' : ''}"
+               onclick="${s.avail ? `window.selectedSlot=${i};document.querySelectorAll('.time-slot').forEach((el,j)=>el.classList.toggle('selected',j===${i}))` : ''}">
             <div class="slot-time">${s.time}</div>
             <div class="slot-type">${s.type}</div>
             ${s.fast ? '<div class="slot-badge">Fast Pickup</div>' : ''}
@@ -337,7 +345,7 @@ function renderCheckoutStep(container) {
     </div>` : ''}
 
     <!-- Step 1: Address -->
-    ${checkoutStep === 1 ? `
+    ${window.checkoutStep === 1 ? `
     <div class="checkout-section">
       <h3><span>📍</span> Delivery Address</h3>
       <div style="display:flex;flex-direction:column;gap:12px;">
@@ -358,7 +366,7 @@ function renderCheckoutStep(container) {
     </div>` : ''}
 
     <!-- Step 2: Payment -->
-    ${checkoutStep === 2 ? `
+    ${window.checkoutStep === 2 ? `
     <div class="checkout-section">
       <h3><span>💳</span> Payment Method</h3>
       <div class="payment-options">
@@ -368,13 +376,13 @@ function renderCheckoutStep(container) {
           { id:'cod',  icon:'💵', name:'Cash on Delivery',     sub:'Pay when your order arrives' },
           { id:'wallet', icon:'👛', name:'ServeNow Wallet', sub:'Balance: ₹150 available' },
         ].map(p => `
-          <div class="payment-option ${p.id === selectedPayment ? 'selected' : ''}" onclick="selectedPayment='${p.id}';document.querySelectorAll('.payment-option').forEach(el=>el.classList.remove('selected'));this.classList.add('selected');this.querySelector('.payment-radio').classList.add('selected')">
+          <div class="payment-option ${p.id === window.selectedPayment ? 'selected' : ''}" onclick="window.selectedPayment='${p.id}';document.querySelectorAll('.payment-option').forEach(el=>el.classList.remove('selected'));this.classList.add('selected');this.querySelector('.payment-radio').classList.add('selected')">
             <div class="payment-icon">${p.icon}</div>
             <div class="payment-info">
               <div class="payment-name">${p.name}</div>
               <div class="payment-sub">${p.sub}</div>
             </div>
-            <div class="payment-radio ${p.id === selectedPayment ? 'selected' : ''}"></div>
+            <div class="payment-radio ${p.id === window.selectedPayment ? 'selected' : ''}"></div>
           </div>`).join('')}
       </div>
     </div>` : ''}
@@ -382,7 +390,7 @@ function renderCheckoutStep(container) {
     <!-- CTA -->
     <div class="sticky-footer">
       <button class="btn-primary" onclick="checkoutNext()">
-        ${checkoutStep < 2 ? 'Continue' : `Place Order · ₹${grandTotal}`}
+        ${window.checkoutStep < 2 ? 'Continue' : `Place Order · ₹${grandTotal}`}
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </button>
     </div>
@@ -391,8 +399,8 @@ function renderCheckoutStep(container) {
 
 function checkoutNext() {
   const mc = document.getElementById('main-content');
-  if (checkoutStep < 2) {
-    checkoutStep++;
+  if (window.checkoutStep < 2) {
+    window.checkoutStep++;
     renderCheckoutStep(mc);
   } else {
     // Place order
@@ -400,30 +408,43 @@ function checkoutNext() {
   }
 }
 
-function placeOrder(container) {
+async function placeOrder(container) {
   // Show loading
   const btn = container.querySelector('.btn-primary');
   if (btn) { btn.disabled = true; btn.textContent = 'Processing…'; }
 
-  // Save cart details before clearing
   const orderItems = App.state.cart.map(item => ({
-    name: `${item.name} ×${item.qty}`,
+    name: item.name,
     emoji: item.emoji,
-    price: item.price * item.qty
+    price: item.price,
+    qty: item.qty
   }));
   const total = App.getCartTotal();
   const deliveryFee = total >= 299 ? 0 : 29;
   const taxes = Math.round(total * 0.05);
   const grandTotal = total + deliveryFee + taxes;
 
-  setTimeout(() => {
-    const orderId = 'ORD-' + Math.floor(9000 + Math.random() * 999);
+  const slotLabel = PICKUP_SLOTS[window.selectedSlot] ? PICKUP_SLOTS[window.selectedSlot].time : '15–30 min';
+
+  try {
+    const response = await fetch('http://localhost:8000/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        items: orderItems,
+        total: grandTotal,
+        slot: slotLabel,
+        address: '42, Sector 15, Noida'
+      })
+    });
     
-    // Assign order state safely
+    if (!response.ok) throw new Error('Network error');
+    const result = await response.json();
+    
     App.state.activeOrder = {
-      id: orderId,
+      id: result.id,
       statusIndex: 0,
-      eta: 28,
+      eta: result.eta,
       items: orderItems,
       total: grandTotal,
       steps: DATA.activeOrder.steps,
@@ -432,15 +453,12 @@ function placeOrder(container) {
 
     App.clearCart();
 
-    /* FIX #1 — PICKUP_SLOTS is now in scope (module-level) */
-    const slotLabel = PICKUP_SLOTS[selectedSlot] ? PICKUP_SLOTS[selectedSlot].time : '15–30 min';
-
     container.innerHTML = `
     <div class="order-confirm page-enter">
       <div class="confirm-animation">🎉</div>
       <h2 class="confirm-title">Order Placed!</h2>
       <p class="confirm-sub">Your services are confirmed. We'll pick up your items at your selected slot.</p>
-      <div class="order-id-badge">Order #${orderId}</div>
+      <div class="order-id-badge">Order #${result.id}</div>
       <div style="background:var(--brand-light);border-radius:var(--r-xl);padding:16px;width:100%;margin-top:8px;">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
           <span style="font-size:1.4rem">🛵</span>
@@ -458,7 +476,10 @@ function placeOrder(container) {
         <button class="btn-ghost" onclick="App.navigate('home')">Back to Home</button>
       </div>
     </div>`;
-  }, 1800);
+  } catch {
+    showToast('❌ Failed to connect to server');
+    if (btn) { btn.disabled = false; btn.textContent = 'Place Order'; }
+  }
 }
 
 /* ═══════════════ TRACKING PAGE ═══════════════ */
@@ -469,18 +490,19 @@ function renderTracking(container) {
   container.innerHTML = `
   <div class="tracking-page page-enter">
     <!-- Map -->
-    <div class="tracking-map">
-      <div class="map-grid"></div>
-      <div class="map-road-h" style="top:40%"></div>
-      <div class="map-road-h" style="top:70%"></div>
-      <div class="map-road-v" style="left:30%"></div>
-      <div class="map-road-v" style="left:65%"></div>
-      <div class="map-pulse" style="top:40%;left:65%;"></div>
-      <div class="map-pin" style="top:40%;left:65%;">📍</div>
-      <div class="map-driver" style="top:40%;left:35%;">🛵</div>
-      <div class="map-eta">
-        <div class="eta-min">${order.eta || 22}</div>
-        <div class="eta-label">min away</div>
+    <div class="tracking-map" style="padding:0; overflow:hidden; position:relative;">
+      <iframe 
+        width="100%" 
+        height="100%" 
+        style="border:0;" 
+        loading="lazy" 
+        allowfullscreen 
+        src="https://maps.google.com/maps?q=${encodeURIComponent(order.address)}&t=&z=14&ie=UTF8&iwloc=&output=embed">
+      </iframe>
+      <div style="position:absolute; bottom:16px; left:50%; transform:translateX(-50%); background:white; padding:8px 16px; border-radius:20px; box-shadow:0 4px 15px rgba(0,0,0,0.15); display:flex; align-items:center; gap:8px; font-weight:700; z-index:10; border:2px solid var(--brand);">
+        <span style="width:10px; height:10px; background:var(--brand); border-radius:50%; display:inline-block; animation:pulse 1.5s infinite;"></span>
+        <span class="eta-min" style="font-size:18px; color:var(--text-primary); font-variant-numeric: tabular-nums;">${order.eta || 22}:00</span> 
+        <span style="color:var(--text-muted); font-size:14px; font-weight:600;">away</span>
       </div>
     </div>
 
@@ -533,18 +555,23 @@ function renderTracking(container) {
     </div>
   </div>`;
 
-  /* FIX #3 — store interval ID in container so App.navigate() can clear it */
-  let eta = order.eta || 22;
+  /* FIX #3 — Tick down ETA every second dynamically */
+  let totalSeconds = (order.eta || 22) * 60;
   const etaInterval = setInterval(() => {
     if (!document.body.contains(container)) {
       clearInterval(etaInterval);
       return;
     }
-    if (eta <= 1) { clearInterval(etaInterval); return; }
-    eta--;
+    if (totalSeconds <= 0) { clearInterval(etaInterval); return; }
+    totalSeconds--;
+    
+    const m = Math.floor(totalSeconds / 60);
+    const s = totalSeconds % 60;
+    const formatted = `${m}:${s.toString().padStart(2, '0')}`;
+    
     const etaEl = container.querySelector('.eta-min');
-    if (etaEl) etaEl.textContent = eta;
-  }, 8000);
+    if (etaEl) etaEl.textContent = formatted;
+  }, 1000);
 }
 
 /* ═══════════════ ORDER HISTORY PAGE ═══════════════ */
@@ -576,6 +603,14 @@ function renderOrders(container) {
       </div>
     </div>
 
+    ${!App.state.activeOrder && DATA.orders.length === 0 ? `
+    <div class="empty-state" style="margin:40px 16px;">
+      <div class="empty-icon" style="font-size:3rem; margin-bottom:12px;">📝</div>
+      <h3>No Orders Yet</h3>
+      <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">You haven't placed any orders. Start booking your first service!</p>
+      <button class="btn-primary" style="width:auto; padding:12px 32px;" onclick="App.navigate('home')">Start Booking</button>
+    </div>` : ''}
+
     ${DATA.orders.map(o => `
     <div class="order-history-card" onclick="App.navigate('tracking')">
       <div class="order-history-header">
@@ -597,7 +632,7 @@ function renderOrders(container) {
         <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Provider: ${o.provider.name} · ★ ${o.provider.rating}</div>
         <div class="order-history-footer">
           <div class="order-total-label">Total: ₹${o.total}</div>
-          <button class="reorder-action-btn" onclick="event.stopPropagation();App.navigate('category',{id:'ironing'});showToast('Items added! 🎉')">Reorder ↺</button>
+          <button class="reorder-action-btn" onclick="event.stopPropagation();window.reorderHistory('${o.id}')">Reorder ↺</button>
         </div>
       </div>
     </div>`).join('')}
@@ -691,3 +726,52 @@ function removeServiceById(svcId, catId) {
   renderCategoryAction(svcId, catId);
 }
 
+/* ─── History Reorder Clone Flow ─── */
+function reorderHistory(orderId) {
+  const pastOrder = DATA.orders.find(o => o.id === orderId);
+  if (!pastOrder) return;
+  
+  // Clone order into a new active order
+  const newId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
+  const newOrder = {
+    id: newId,
+    status: 'pending',
+    statusIndex: 0,
+    eta: 25,
+    items: pastOrder.items.map(i => ({...i})),
+    total: pastOrder.total,
+    address: pastOrder.address,
+    slot: 'Asap (Fast Pickup)',
+    provider: pastOrder.provider,
+    steps: [
+      { label: 'Order Confirmed',   emoji: '✅', time: 'Just now', desc: 'Your order has been confirmed.',             done: true, active: true  },
+      { label: 'Picked Up',         emoji: '🛵', time: 'Pending', desc: 'Agent is on the way to your address.',      done: false  },
+      { label: 'In Process',        emoji: '✂️', time: 'Pending', desc: 'Your garments are being serviced.',    done: false },
+      { label: 'Out for Delivery',  emoji: '🚴', time: 'Pending', desc: 'On the way back to you.',              done: false },
+      { label: 'Delivered',         emoji: '🎉', time: 'Pending', desc: 'Successfully delivered!',              done: false },
+    ]
+  };
+  
+  App.state.activeOrder = newOrder;
+  showToast('✅ Order cloned and placed!');
+  
+  // Navigate directly to tracking to show the flow
+  App.navigate('tracking');
+}
+
+
+window.stars = stars;
+window.renderHome = renderHome;
+window.renderCategory = renderCategory;
+window.renderCategoryAction = renderCategoryAction;
+window.renderCheckout = renderCheckout;
+window.renderCheckoutStep = renderCheckoutStep;
+window.checkoutNext = checkoutNext;
+window.placeOrder = placeOrder;
+window.renderTracking = renderTracking;
+window.renderOrders = renderOrders;
+window.renderProvider = renderProvider;
+window.addServiceById = addServiceById;
+window.removeServiceById = removeServiceById;
+window.reorderHistory = reorderHistory;
+window.focusSearch = focusSearch;

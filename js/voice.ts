@@ -1,3 +1,6 @@
+// @ts-nocheck
+import { DATA } from './data.ts';
+import { App } from './app.ts';
 /* ═══════════════════════════════════════════
    ServeNow — voice.js
    Web Speech API wrapper (EN+HI), intent parser,
@@ -48,7 +51,7 @@ function startVoiceAssistant() {
   // FIX #1 — Always create a fresh instance so handlers + lang are up-to-date.
   // Re-using a singleton means stale lang / detached handlers after first session.
   if (voiceRecognition) {
-    try { voiceRecognition.abort(); } catch (_) {}
+    try { voiceRecognition.abort(); } catch {}
   }
   voiceRecognition = new SpeechRecognition();
   voiceRecognition.continuous = false;
@@ -103,7 +106,7 @@ function startVoiceAssistant() {
       try {
         voiceRecognition.abort();
         voiceRecognition.start();
-      } catch (_) {
+      } catch {
         simulateVoiceDemo();
       }
     } else {
@@ -270,7 +273,7 @@ function setVoiceLang(lang) {
   if (voiceRecognition && isListening) {
     try {
       voiceRecognition.stop();   // onend fires, isListening -> false
-    } catch (_) {}
+    } catch {}
     // Brief delay so the engine fully stops before restarting
     setTimeout(startVoiceAssistant, 300);
   }
@@ -284,7 +287,7 @@ function closeVoiceModal() {
     // FIX #7 — Null out onend before stopping so stale callbacks don't fire after close.
     voiceRecognition.onend = null;
     if (isListening) {
-      try { voiceRecognition.stop(); } catch (_) {}
+      try { voiceRecognition.stop(); } catch {}
     }
     isListening = false;
   }
@@ -292,3 +295,16 @@ function closeVoiceModal() {
   document.getElementById('voice-modal').classList.add('hidden');
   document.getElementById('voice-overlay').classList.add('hidden');
 }
+
+window.speak = speak;
+window.startVoiceAssistant = startVoiceAssistant;
+window.showDemoFallbackBtn = showDemoFallbackBtn;
+window.simulateVoiceDemo = simulateVoiceDemo;
+window.processVoiceCommand = processVoiceCommand;
+window.matchIntent = matchIntent;
+window.extractNumber = extractNumber;
+window.setVoiceStatus = setVoiceStatus;
+window.setVoiceTranscript = setVoiceTranscript;
+window.showVoiceResponse = showVoiceResponse;
+window.setVoiceLang = setVoiceLang;
+window.closeVoiceModal = closeVoiceModal;

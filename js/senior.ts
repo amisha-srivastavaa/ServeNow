@@ -1,3 +1,5 @@
+// @ts-nocheck
+import { App } from './app.ts';
 /* ═══════════════════════════════════════════
    ServeNow — senior.js
    Senior Mode toggle, mic FAB wiring,
@@ -189,3 +191,7 @@ window.addEventListener('load', () => {
   App.registerPage('profile', (c) => renderProfile(c));
 });
 
+
+window.renderProfile = renderProfile;
+window.handleSeniorToggle = handleSeniorToggle;
+window.showVoiceLangPicker = showVoiceLangPicker;

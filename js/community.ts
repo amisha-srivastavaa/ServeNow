@@ -1,3 +1,5 @@
+// @ts-nocheck
+import { App } from './app.ts';
 /* ═══════════════════════════════════════════
    ServeNow — community.js
    Forum feed, likes, comments, compose modal,
@@ -6,7 +8,6 @@
 
 let communityFilter = 'All';
 let composeCat = 'Casual';
-let composeOverlayOpen = false;
 const categories = ['All', 'Office Wear', 'Casual', 'Ethnic', 'Formal', 'Wedding'];
 
 /* ═══════════════ COMMUNITY PAGE ═══════════════ */
@@ -303,7 +304,6 @@ function setCommunityFilter(cat) {
 function openCompose() {
   document.getElementById('compose-modal').classList.remove('hidden');
   document.getElementById('compose-overlay').classList.remove('hidden');
-  composeOverlayOpen = true;
   setTimeout(() => {
     const textarea = document.getElementById('compose-text');
     if (textarea) textarea.focus();
@@ -315,7 +315,6 @@ function closeCompose() {
   const overlay = document.getElementById('compose-overlay');
   if (modal) modal.classList.add('hidden');
   if (overlay) overlay.classList.add('hidden');
-  composeOverlayOpen = false;
 }
 
 function selectComposeCat(cat, btn) {
@@ -363,3 +362,17 @@ window.addEventListener('load', () => {
   App.registerPage('community', (c) => renderCommunity(c));
 });
 
+
+window.renderCommunity = renderCommunity;
+window.renderPostCards = renderPostCards;
+window.renderPostCard = renderPostCard;
+window.toggleLike = toggleLike;
+window.toggleComments = toggleComments;
+window.submitComment = submitComment;
+window.toggleFollow = toggleFollow;
+window.toggleReadMore = toggleReadMore;
+window.setCommunityFilter = setCommunityFilter;
+window.openCompose = openCompose;
+window.closeCompose = closeCompose;
+window.selectComposeCat = selectComposeCat;
+window.submitPost = submitPost;

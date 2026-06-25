@@ -1,10 +1,11 @@
+// @ts-nocheck
 /* ═══════════════════════════════════════════
    ServeNow — data.js
    All mock data: categories, services, orders,
    community posts, style feed, providers
    ═══════════════════════════════════════════ */
 
-const DATA = {
+export const DATA = {
 
   /* ─── Service Categories ─── */
   categories: [
@@ -337,3 +338,5 @@ const DATA = {
     { id: 'ORD-9863', customer: 'Sunita K.', items: 'Dry Clean Suit × 1',             address: 'Sector 62, Noida', slot: 'Today 6–8 PM', status: 'pending',    total: 299 },
   ],
 };
+
+window.DATA = DATA;

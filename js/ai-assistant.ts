@@ -1,3 +1,6 @@
+// @ts-nocheck
+import { DATA } from './data.ts';
+import { App } from './app.ts';
 /* ═══════════════════════════════════════════
    ServeNow — ai-assistant.js
    SmartFit upload flow, body measurement simulation,
@@ -5,8 +8,8 @@
    ═══════════════════════════════════════════ */
 
 let aiTab = 'smartfit';  /* 'smartfit' | 'feed' */
-let quizStep = 0;
-let quizAnswers = [];
+window.quizStep = 0;
+window.quizAnswers = [];
 let uploadedPhotos = [];
 let smartfitPhase = 'upload'; /* 'upload' | 'processing' | 'result' */
 
@@ -51,8 +54,8 @@ function switchAITab(tab) {
   } else if (tab === 'feed') {
     content.innerHTML = renderStyleFeedHTML();
   } else if (tab === 'quiz') {
-    quizStep = 0;
-    quizAnswers = [];
+    window.quizStep = 0;
+    window.quizAnswers = [];
     content.innerHTML = renderQuizHTML();
   }
 
@@ -173,7 +176,8 @@ function runProcessingAnimation() {
       if (el) {
         el.classList.remove('active');
         el.classList.add('done');
-        el.querySelector('.process-step-dot') && (el.querySelector('.process-step-dot').style.background = 'var(--success)');
+        const dot = el.querySelector('.process-step-dot');
+        if (dot) dot.style.background = 'var(--success)';
       }
       current++;
       const next = document.getElementById(stepLabels[current]);
@@ -263,8 +267,8 @@ function renderQuizHTML() {
     return renderStyleResultHTML(App.state.profile.styleQuizResult);
   }
 
-  const q = DATA.styleQuiz[quizStep];
-  const pct = Math.round((quizStep / DATA.styleQuiz.length) * 100);
+  const q = DATA.styleQuiz[window.quizStep];
+  const pct = Math.round((window.quizStep / DATA.styleQuiz.length) * 100);
 
   return `
   <div class="smartfit-section">
@@ -272,11 +276,11 @@ function renderQuizHTML() {
       <div class="quiz-progress-bar">
         <div class="quiz-progress-fill" style="width:${pct}%"></div>
       </div>
-      <div class="quiz-q-num">Question ${quizStep + 1} of ${DATA.styleQuiz.length}</div>
+      <div class="quiz-q-num">Question ${window.quizStep + 1} of ${DATA.styleQuiz.length}</div>
       <div class="quiz-question">${q.question}</div>
       <div class="quiz-options">
         ${q.options.map((opt, i) => `
-          <div class="quiz-option ${quizAnswers[quizStep] === i ? 'selected' : ''}"
+          <div class="quiz-option ${window.quizAnswers[window.quizStep] === i ? 'selected' : ''}"
                id="qopt-${i}"
                onclick="selectQuizOption(${i})">
             <div class="quiz-option-emoji">${opt.emoji}</div>
@@ -284,10 +288,10 @@ function renderQuizHTML() {
           </div>`).join('')}
       </div>
       <div class="quiz-nav">
-        ${quizStep > 0 ? `<button class="btn-ghost btn-sm" onclick="quizBack()">← Back</button>` : '<div></div>'}
-        <span class="quiz-step-indicator">${quizStep + 1} / ${DATA.styleQuiz.length}</span>
-        <button class="btn-secondary btn-sm" style="width:auto;" onclick="quizNext()" ${quizAnswers[quizStep] === undefined ? 'disabled style="opacity:.5;pointer-events:none"' : ''} id="quiz-next-btn">
-          ${quizStep === DATA.styleQuiz.length - 1 ? 'See Results 🎉' : 'Next →'}
+        ${window.quizStep > 0 ? `<button class="btn-ghost btn-sm" onclick="quizBack()">← Back</button>` : '<div></div>'}
+        <span class="quiz-step-indicator">${window.quizStep + 1} / ${DATA.styleQuiz.length}</span>
+        <button class="btn-secondary btn-sm" style="width:auto;" onclick="quizNext()" ${window.quizAnswers[window.quizStep] === undefined ? 'disabled style="opacity:.5;pointer-events:none"' : ''} id="quiz-next-btn">
+          ${window.quizStep === DATA.styleQuiz.length - 1 ? 'See Results 🎉' : 'Next →'}
         </button>
       </div>
     </div>
@@ -295,31 +299,58 @@ function renderQuizHTML() {
 }
 
 function selectQuizOption(i) {
-  quizAnswers[quizStep] = i;
+  window.quizAnswers[window.quizStep] = i;
   document.querySelectorAll('.quiz-option').forEach((el, j) => el.classList.toggle('selected', j === i));
   const btn = document.getElementById('quiz-next-btn');
   if (btn) { btn.removeAttribute('disabled'); btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
 }
 
-function quizNext() {
-  if (quizAnswers[quizStep] === undefined) return;
-  if (quizStep < DATA.styleQuiz.length - 1) {
-    quizStep++;
+async function quizNext() {
+  if (window.quizAnswers[window.quizStep] === undefined) return;
+  if (window.quizStep < DATA.styleQuiz.length - 1) {
+    window.quizStep++;
     const content = document.getElementById('ai-tab-content');
     if (content) content.innerHTML = renderQuizHTML();
   } else {
-    // Show results
-    const result = DATA.styleResults.default;
-    App.state.profile.styleQuizResult = result;
+    // Show loading
     const content = document.getElementById('ai-tab-content');
-    if (content) content.innerHTML = renderStyleResultHTML(result);
-    showToast('🎉 Style profile ready!');
+    if (content) content.innerHTML = `<div class="smartfit-section" style="text-align:center;padding:40px;"><h3>Analysing your style...</h3></div>`;
+
+    try {
+      const response = await fetch('http://localhost:8000/api/ai/style', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          answers: window.quizAnswers
+        })
+      });
+      
+      if (!response.ok) throw new Error('Network error');
+      const result = await response.json();
+      
+      const finalResult = {
+        label: result.vibe,
+        desc: result.recommendation,
+        tags: ['Gemini Powered', 'Smart Fit', 'Trending']
+      };
+      
+      App.state.profile.styleQuizResult = finalResult;
+      if (content) content.innerHTML = renderStyleResultHTML(finalResult);
+      showToast('🎉 Style profile ready!');
+
+    } catch {
+      showToast('❌ Failed to connect to Gemini AI Server');
+      // Fallback
+      const result = DATA.styleResults.default;
+      App.state.profile.styleQuizResult = result;
+      if (content) content.innerHTML = renderStyleResultHTML(result);
+    }
   }
 }
 
 function quizBack() {
-  if (quizStep > 0) {
-    quizStep--;
+  if (window.quizStep > 0) {
+    window.quizStep--;
     const content = document.getElementById('ai-tab-content');
     if (content) content.innerHTML = renderQuizHTML();
   }
@@ -345,7 +376,7 @@ function renderStyleResultHTML(result) {
       <button class="btn-primary" onclick="App.navigate('category',{id:'tailoring'})">Explore Tailoring →</button>
       <button class="btn-secondary" style="margin-top:8px;" onclick="switchAITab('feed')">Browse Style Feed →</button>
     </div>
-    <button class="btn-ghost" style="width:100%;justify-content:center;" onclick="App.state.profile.styleQuizResult=null;quizStep=0;quizAnswers=[];switchAITab('quiz')">
+    <button class="btn-ghost" style="width:100%;justify-content:center;" onclick="App.state.profile.styleQuizResult=null;window.quizStep=0;window.quizAnswers=[];switchAITab('quiz')">
       Retake Quiz
     </button>
   </div>`;
@@ -364,7 +395,7 @@ function renderStyleFeedHTML() {
       <button class="btn-secondary btn-sm" style="width:auto;flex-shrink:0;" onclick="switchAITab('quiz')">Take Quiz</button>
     </div>
 
-    ${App.state.styleFeed.map((post, idx) => `
+    ${App.state.styleFeed.map((post) => `
     <div class="style-post-card" id="sfpost-${post.id}">
       <div class="style-post-header">
         <div class="avatar avatar-md" style="background:var(--brand-light);color:var(--brand-dark);font-weight:800;">${post.author.avatar}</div>
@@ -435,3 +466,21 @@ window.addEventListener('load', () => {
   App.registerPage('ai', (c) => renderAI(c));
 });
 
+
+window.renderAI = renderAI;
+window.switchAITab = switchAITab;
+window.renderSmartFitHTML = renderSmartFitHTML;
+window.renderUploadHTML = renderUploadHTML;
+window.simulatePhotoUpload = simulatePhotoUpload;
+window.startAnalysis = startAnalysis;
+window.renderProcessingHTML = renderProcessingHTML;
+window.runProcessingAnimation = runProcessingAnimation;
+window.renderMeasurementResultHTML = renderMeasurementResultHTML;
+window.renderQuizHTML = renderQuizHTML;
+window.selectQuizOption = selectQuizOption;
+window.quizNext = quizNext;
+window.quizBack = quizBack;
+window.renderStyleResultHTML = renderStyleResultHTML;
+window.renderStyleFeedHTML = renderStyleFeedHTML;
+window.toggleStyleLike = toggleStyleLike;
+window.toggleStyleSave = toggleStyleSave;

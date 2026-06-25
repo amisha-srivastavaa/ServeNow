@@ -1,3 +1,5 @@
+// @ts-nocheck
+import { DATA } from './data.ts';
 /* ═══════════════════════════════════════════
    ServeNow — app.js
    Core router, global state, navigation,
@@ -5,7 +7,7 @@
    ═══════════════════════════════════════════ */
 
 /* ─── Global State ─── */
-window.App = (function () {
+export const App = (function () {
 
   const state = {
     page: 'home',
@@ -63,7 +65,7 @@ window.App = (function () {
     if (renderer) {
       mc.innerHTML = '';
       renderer(mc, state.params);
-      mc.firstElementChild && mc.firstElementChild.classList.add('page-enter');
+      if (mc.firstElementChild) mc.firstElementChild.classList.add('page-enter');
     } else {
       mc.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><h3>Page not found</h3><p>Sorry, this page doesn't exist.</p></div>`;
     }
@@ -398,4 +400,20 @@ function showNotifToast() {
 }
 
 /* ─── Init after ALL scripts load (avoids race with page registration) ─── */
-window.addEventListener('load', () => App.init());
+window.addEventListener('load', () => {
+  setTimeout(() => App.init(), 0);
+});
+
+window.toggleCart = toggleCart;
+window.closeCart = closeCart;
+window.renderCartInner = renderCartInner;
+window.showToast = showToast;
+window.showLocationModal = showLocationModal;
+window.closeLocationModal = closeLocationModal;
+window.detectLocation = detectLocation;
+window.selectAddress = selectAddress;
+window.showHelpModal = showHelpModal;
+window.closeHelpModal = closeHelpModal;
+window.simulateCall = simulateCall;
+window.showNotifToast = showNotifToast;
+window.App = App;
