@@ -1,9 +1,9 @@
-/* ═══════════════════════════════════════════
+/* ===========================================
    ServeNow — community.css
    Forum feed, post composer, thread, filters
-   ═══════════════════════════════════════════ */
+   =========================================== */
 
-/* ─── Community Page ─── */
+/* --- Community Page --- */
 .community-page { display: flex; flex-direction: column; }
 
 .community-hero {
@@ -94,7 +94,7 @@
   cursor: pointer;
 }
 
-/* ─── Filter Row ─── */
+/* --- Filter Row --- */
 .filter-row {
   display: flex;
   gap: var(--sp-2);
@@ -104,7 +104,7 @@
 }
 .filter-row::-webkit-scrollbar { display: none; }
 
-/* ─── Community Feed ─── */
+/* --- Community Feed --- */
 .community-feed {
   display: flex;
   flex-direction: column;
@@ -283,7 +283,7 @@
   border-color: var(--border);
 }
 
-/* ─── Comments Section ─── */
+/* --- Comments Section --- */
 .comments-section {
   background: var(--surface-3);
   border-top: 1px solid var(--border-light);
@@ -375,7 +375,7 @@
 }
 .add-comment-btn:hover { background: var(--brand-dark); }
 
-/* ─── Compose Modal ─── */
+/* --- Compose Modal --- */
 .compose-modal {
   position: fixed;
   bottom: 0;
@@ -467,7 +467,7 @@
   cursor: pointer;
 }
 
-/* ─── Profile Page ─── */
+/* --- Profile Page --- */
 .profile-page { display: flex; flex-direction: column; }
 .profile-header {
   background: var(--gradient-brand);

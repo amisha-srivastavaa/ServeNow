@@ -1,15 +1,15 @@
-/* ═══════════════════════════════════════════
+/* ===========================================
    ServeNow — community.js
    Forum feed, likes, comments, compose modal,
    follow/unfollow, filter chips, profile
-   ═══════════════════════════════════════════ */
+   =========================================== */
 
 let communityFilter = 'All';
 let composeCat = 'Casual';
 let composeOverlayOpen = false;
 const categories = ['All', 'Office Wear', 'Casual', 'Ethnic', 'Formal', 'Wedding'];
 
-/* ═══════════════ COMMUNITY PAGE ═══════════════ */
+/* =============== COMMUNITY PAGE =============== */
 function renderCommunity(container) {
   container.innerHTML = `
   <div class="community-page page-enter">
@@ -107,7 +107,7 @@ function renderCommunity(container) {
   </div>`;
 }
 
-/* ─── Post Cards ─── */
+/* --- Post Cards --- */
 function renderPostCards() {
   const posts = App.state.communityPosts.filter(p =>
     communityFilter === 'All' || p.category === communityFilter
@@ -204,7 +204,7 @@ function renderPostCard(post) {
   </div>`;
 }
 
-/* ─── Like Toggle ─── */
+/* --- Like Toggle --- */
 function toggleLike(postId) {
   const post = App.state.communityPosts.find(p => p.id === postId);
   if (!post) return;
@@ -221,7 +221,7 @@ function toggleLike(postId) {
   if (post.liked) showToast('❤️ Liked!');
 }
 
-/* ─── Comments Toggle ─── */
+/* --- Comments Toggle --- */
 function toggleComments(postId) {
   const section = document.getElementById(`comments-${postId}`);
   if (!section) return;
@@ -231,7 +231,7 @@ function toggleComments(postId) {
   section.style.gap = '12px';
 }
 
-/* ─── Submit Comment ─── */
+/* --- Submit Comment --- */
 function submitComment(postId) {
   const input = document.getElementById(`comment-input-${postId}`);
   if (!input || !input.value.trim()) return;
@@ -265,7 +265,7 @@ function submitComment(postId) {
   }
 }
 
-/* ─── Follow Toggle ─── */
+/* --- Follow Toggle --- */
 function toggleFollow(postId) {
   const post = App.state.communityPosts.find(p => p.id === postId);
   if (!post) return;
@@ -278,7 +278,7 @@ function toggleFollow(postId) {
   showToast(post.author.following ? `✅ Following ${post.author.name}!` : 'Unfollowed');
 }
 
-/* ─── Read More ─── */
+/* --- Read More --- */
 function toggleReadMore(postId) {
   const textEl = document.getElementById(`post-text-${postId}`);
   const btnEl = document.getElementById(`read-more-${postId}`);
@@ -287,7 +287,7 @@ function toggleReadMore(postId) {
   btnEl.textContent = expanded ? 'Show less' : 'Read more';
 }
 
-/* ─── Filter ─── */
+/* --- Filter --- */
 function setCommunityFilter(cat) {
   communityFilter = cat;
   const feed = document.getElementById('community-feed');
@@ -299,7 +299,7 @@ function setCommunityFilter(cat) {
   });
 }
 
-/* ─── Compose Modal ─── */
+/* --- Compose Modal --- */
 function openCompose() {
   document.getElementById('compose-modal').classList.remove('hidden');
   document.getElementById('compose-overlay').classList.remove('hidden');
@@ -358,7 +358,7 @@ function submitPost() {
   setCommunityFilter(communityFilter);
 }
 
-/* ─── Register Page ─── */
+/* --- Register Page --- */
 window.addEventListener('load', () => {
   App.registerPage('community', (c) => renderCommunity(c));
 });

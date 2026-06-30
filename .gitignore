@@ -14,10 +14,18 @@ dist-ssr
 
 # local env files
 .env
+.env.*
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+.env.production
+
+# GCloud SDK (binary — never commit)
+.gcloud-sdk/
+
+# SQLite databases
+*.db
 
 # Editor directories and files
 .vscode/*

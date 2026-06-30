@@ -1,8 +1,8 @@
-/* ═══════════════════════════════════════════
+/* ===========================================
    ServeNow — ai-assistant.js
    SmartFit upload flow, body measurement simulation,
    style quiz, personalized style feed
-   ═══════════════════════════════════════════ */
+   =========================================== */
 
 let aiTab = 'smartfit';  /* 'smartfit' | 'feed' */
 let quizStep = 0;
@@ -10,7 +10,7 @@ let quizAnswers = [];
 let uploadedPhotos = [];
 let smartfitPhase = 'upload'; /* 'upload' | 'processing' | 'result' */
 
-/* ═══════════════ AI PAGE ═══════════════ */
+/* =============== AI PAGE =============== */
 function renderAI(container) {
   container.innerHTML = `
   <div class="ai-page page-enter">
@@ -61,7 +61,7 @@ function switchAITab(tab) {
   });
 }
 
-/* ═══════════════ SMARTFIT ═══════════════ */
+/* =============== SMARTFIT =============== */
 function renderSmartFitHTML() {
   if (smartfitPhase === 'result' && App.state.profile.measurements) {
     return renderMeasurementResultHTML(App.state.profile.measurements);
@@ -257,7 +257,7 @@ function renderMeasurementResultHTML(m) {
   </div>`;
 }
 
-/* ═══════════════ STYLE QUIZ ═══════════════ */
+/* =============== STYLE QUIZ =============== */
 function renderQuizHTML() {
   if (App.state.profile.styleQuizResult) {
     return renderStyleResultHTML(App.state.profile.styleQuizResult);
@@ -351,7 +351,7 @@ function renderStyleResultHTML(result) {
   </div>`;
 }
 
-/* ═══════════════ STYLE FEED ═══════════════ */
+/* =============== STYLE FEED =============== */
 function renderStyleFeedHTML() {
   return `
   <div class="style-feed">
@@ -430,7 +430,7 @@ function toggleStyleSave(postId) {
   }
 }
 
-/* ─── Register Page ─── */
+/* --- Register Page --- */
 window.addEventListener('load', () => {
   App.registerPage('ai', (c) => renderAI(c));
 });

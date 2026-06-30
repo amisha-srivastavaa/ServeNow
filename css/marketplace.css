@@ -1,9 +1,9 @@
-/* ═══════════════════════════════════════════
+/* ===========================================
    ServeNow — marketplace.css
    Home, category grid, service list, cart drawer
-   ═══════════════════════════════════════════ */
+   =========================================== */
 
-/* ─── Home Page ─── */
+/* --- Home Page --- */
 .home-page { display: flex; flex-direction: column; }
 
 /* Hero Strip */
@@ -106,7 +106,7 @@
   padding: var(--sp-5) 0;
 }
 
-/* ─── Category Grid ─── */
+/* --- Category Grid --- */
 .category-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -156,7 +156,7 @@
   text-align: center;
 }
 
-/* ─── Quick Reorder ─── */
+/* --- Quick Reorder --- */
 .quick-reorder-scroll {
   display: flex;
   gap: var(--sp-3);
@@ -202,7 +202,7 @@
   cursor: pointer;
 }
 
-/* ─── Promo Carousel ─── */
+/* --- Promo Carousel --- */
 .promo-carousel {
   padding: 0 var(--sp-4);
 }
@@ -222,7 +222,7 @@
   box-shadow: var(--shadow);
 }
 
-/* ─── Category Page ─── */
+/* --- Category Page --- */
 .category-page { display: flex; flex-direction: column; }
 .category-header {
   background: var(--gradient-brand);
@@ -323,7 +323,7 @@
 }
 .service-action { flex-shrink: 0; padding: 0 var(--sp-4) var(--sp-3); display: flex; justify-content: flex-end; }
 
-/* ─── Cart Drawer ─── */
+/* --- Cart Drawer --- */
 .cart-drawer {
   position: fixed;
   bottom: 0;
@@ -419,7 +419,7 @@
 .cart-empty h3 { font-size: var(--text-xl); color: var(--text-primary); }
 .cart-empty p { font-size: var(--text-sm); color: var(--text-muted); text-align: center; }
 
-/* ─── Provider Dashboard ─── */
+/* --- Provider Dashboard --- */
 .provider-page { padding: var(--sp-4); display: flex; flex-direction: column; gap: var(--sp-4); }
 .provider-hero {
   background: var(--gradient-brand);

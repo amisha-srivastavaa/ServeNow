@@ -1,18 +1,17 @@
-// @ts-nocheck
 import { DATA } from './data.ts';
 import { App } from './app.ts';
-/* ═══════════════════════════════════════════
+/* ===========================================
    ServeNow — voice.js
    Web Speech API wrapper (EN+HI), intent parser,
    TTS readback, voice assistant UI
-   ═══════════════════════════════════════════ */
+   =========================================== */
 
 let voiceRecognition = null;
 let voiceLang = 'en-IN';
 let isListening = false;
 let ttsEnabled = true;
 
-/* ─── TTS Speak ─── */
+/* --- TTS Speak --- */
 function speak(text, lang) {
   if (!ttsEnabled) return;
   if (!window.speechSynthesis) return;
@@ -24,7 +23,7 @@ function speak(text, lang) {
   window.speechSynthesis.speak(utter);
 }
 
-/* ─── Start Voice Assistant ─── */
+/* --- Start Voice Assistant --- */
 function startVoiceAssistant() {
   const modal = document.getElementById('voice-modal');
   const overlay = document.getElementById('voice-overlay');
@@ -115,7 +114,7 @@ function startVoiceAssistant() {
   }
 }
 
-/* ─── Demo fallback button (shown when mic is blocked) ─── */
+/* --- Demo fallback button (shown when mic is blocked) --- */
 function showDemoFallbackBtn() {
   const statusEl = document.getElementById('voice-status');
   if (!statusEl) return;
@@ -131,7 +130,7 @@ function showDemoFallbackBtn() {
   }
 }
 
-/* ─── Demo mode (no mic / Firefox / blocked permission) ─── */
+/* --- Demo mode (no mic / Firefox / blocked permission) --- */
 const demoCommands = [
   'Iron 5 shirts pickup tomorrow morning',
   'Check my order status',
@@ -158,7 +157,7 @@ function simulateVoiceDemo() {
   }, 55);
 }
 
-/* ─── Intent Parser ─── */
+/* --- Intent Parser --- */
 function processVoiceCommand(transcript) {
   setVoiceStatus('Processing…');
   const t = transcript.toLowerCase();
@@ -226,7 +225,7 @@ function processVoiceCommand(transcript) {
   }, 800);
 }
 
-/* ─── Helpers ─── */
+/* --- Helpers --- */
 function matchIntent(text, keywords) {
   return keywords.some(k => text.includes(k));
 }
@@ -260,7 +259,7 @@ function showVoiceResponse(text) {
   el.style.animation = 'popIn 0.3s ease both';
 }
 
-/* ─── Language Switch ─── */
+/* --- Language Switch --- */
 function setVoiceLang(lang) {
   voiceLang = lang;
   App.state.voiceLang = lang;
@@ -281,7 +280,7 @@ function setVoiceLang(lang) {
   showToast(lang === 'en-IN' ? '🇬🇧 English selected' : '🇮🇳 हिंदी चुनी गई');
 }
 
-/* ─── Close ─── */
+/* --- Close --- */
 function closeVoiceModal() {
   if (voiceRecognition) {
     // FIX #7 — Null out onend before stopping so stale callbacks don't fire after close.

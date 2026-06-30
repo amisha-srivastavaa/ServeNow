@@ -1,10 +1,10 @@
-/* ═══════════════════════════════════════════
+/* ===========================================
    ServeNow — senior.js
    Senior Mode toggle, mic FAB wiring,
    simplified profile settings integration
-   ═══════════════════════════════════════════ */
+   =========================================== */
 
-/* ─── Profile / Settings Page ─── */
+/* --- Profile / Settings Page --- */
 function renderProfile(container) {
   const profile = App.state.profile;
   const seniorOn = App.state.seniorMode;
@@ -156,7 +156,7 @@ function renderProfile(container) {
   </div>`;
 }
 
-/* ─── Senior Mode Handler ─── */
+/* --- Senior Mode Handler --- */
 function handleSeniorToggle(on) {
   App.setSeniorMode(on);
 
@@ -174,7 +174,7 @@ function handleSeniorToggle(on) {
   }, 300);
 }
 
-/* ─── Voice Language Picker ─── */
+/* --- Voice Language Picker --- */
 function showVoiceLangPicker() {
   const current = App.state.voiceLang;
   const next = current === 'en-IN' ? 'hi-IN' : 'en-IN';
@@ -184,7 +184,7 @@ function showVoiceLangPicker() {
   if (el) el.textContent = label;
 }
 
-/* ─── Register Page ─── */
+/* --- Register Page --- */
 window.addEventListener('load', () => {
   App.registerPage('profile', (c) => renderProfile(c));
 });

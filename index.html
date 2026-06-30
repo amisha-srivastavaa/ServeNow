@@ -14,9 +14,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <style>
-    /* ═══════════════════════════════════════════
+    /* ===========================================
        ServeNow — Design Tokens & Base Styles
-       ═══════════════════════════════════════════ */
+       =========================================== */
     :root {
       --brand: #00B5AD;
       --brand-dark: #00918a;
@@ -49,7 +49,7 @@
       min-height: 100dvh;
     }
 
-    /* ═══ Header & Auth ═══ */
+    /* === Header & Auth === */
     header {
       position: sticky;
       top: 0;
@@ -111,7 +111,7 @@
       .user-profile span { max-width: 12rem; }
     }
 
-    /* ═══ Layout & Views ═══ */
+    /* === Layout & Views === */
     .container {
       width: 100%;
       max-width: var(--max-w);
@@ -136,7 +136,7 @@
       margin: -0.4rem 0 0.75rem;
     }
 
-    /* ═══ Home — Search & Service Grid ═══ */
+    /* === Home — Search & Service Grid === */
     .search-bar {
       width: 100%;
       padding: 0.875rem 1rem;
@@ -199,7 +199,7 @@
       font-size: 0.9rem;
     }
 
-    /* ═══ Google Maps (Home) ═══ */
+    /* === Google Maps (Home) === */
     .map-container {
       width: 100%;
       height: 12.5rem;
@@ -237,7 +237,7 @@
       color: var(--text-main);
     }
 
-    /* ═══ How It Works ═══ */
+    /* === How It Works === */
     .how-it-works {
       margin-top: 1.5rem;
       margin-bottom: 1rem;
@@ -266,7 +266,7 @@
       color: var(--text-main);
     }
 
-    /* ═══ Orders — Live Card & History ═══ */
+    /* === Orders — Live Card & History === */
     .live-order-card {
       background: linear-gradient(135deg, var(--brand) 0%, #009688 60%, #00796B 100%);
       color: #fff;
@@ -384,7 +384,7 @@
     }
     .empty-state .emoji { font-size: 2.75rem; display: block; margin-bottom: 0.75rem; }
 
-    /* ═══ Loading Skeleton ═══ */
+    /* === Loading Skeleton === */
     .skeleton-wrap { display: flex; flex-direction: column; gap: 0.75rem; }
     .skeleton-card {
       background: var(--surface);
@@ -421,7 +421,7 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ═══ Booking Modal ═══ */
+    /* === Booking Modal === */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -475,7 +475,7 @@
     .form-input[readonly] { background: var(--bg); color: var(--text-muted); }
     .modal-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
 
-    /* ═══ Track Map Modal ═══ */
+    /* === Track Map Modal === */
     #track-modal .modal { border-radius: 1rem; margin: 1rem; max-height: 85dvh; }
     #track-map { width: 100%; height: 14rem; border-radius: 0.75rem; margin: 0.75rem 0; background: var(--brand-xlight); }
     .track-address { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; }
@@ -488,7 +488,7 @@
       margin-top: 0.5rem;
     }
 
-    /* ═══ Toast & Bottom Nav ═══ */
+    /* === Toast & Bottom Nav === */
     .toast {
       position: fixed;
       top: calc(var(--header-h) + 0.75rem);
@@ -572,7 +572,7 @@
 </head>
 <body>
 
-  <!-- ═══ HEADER (Auth lives here) ═══ -->
+  <!-- === HEADER (Auth lives here) === -->
   <header>
     <div class="logo">ServeNow</div>
     <div class="auth-section" id="auth-section">
@@ -584,7 +584,7 @@
     </div>
   </header>
 
-  <!-- ═══ HOME VIEW ═══ -->
+  <!-- === HOME VIEW === -->
   <main id="home" class="view active container">
     <input type="search" class="search-bar" id="search-input" placeholder="Search services (e.g., Ironing, Repair)…" autocomplete="off" />
 
@@ -619,7 +619,7 @@
     </div>
   </main>
 
-  <!-- ═══ ORDERS VIEW ═══ -->
+  <!-- === ORDERS VIEW === -->
   <main id="orders" class="view container">
     <h2 class="section-title">Live Order</h2>
     <div id="live-order-container">
@@ -638,7 +638,7 @@
     </div>
   </main>
 
-  <!-- ═══ BOOKING MODAL ═══ -->
+  <!-- === BOOKING MODAL === -->
   <div class="modal-overlay" id="booking-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal">
       <div class="modal-handle"></div>
@@ -662,7 +662,7 @@
     </div>
   </div>
 
-  <!-- ═══ TRACK MAP MODAL ═══ -->
+  <!-- === TRACK MAP MODAL === -->
   <div class="modal-overlay" id="track-modal" role="dialog" aria-modal="true">
     <div class="modal">
       <div class="modal-handle"></div>
@@ -676,7 +676,7 @@
     </div>
   </div>
 
-  <!-- ═══ DELIVERED POPUP ═══ -->
+  <!-- === DELIVERED POPUP === -->
   <div class="popup-overlay" id="delivered-popup">
     <div class="popup-box">
       <div class="emoji">🎉</div>
@@ -686,10 +686,10 @@
     </div>
   </div>
 
-  <!-- ═══ TOAST ═══ -->
+  <!-- === TOAST === -->
   <div class="toast" id="toast">Order Placed Successfully!</div>
 
-  <!-- ═══ BOTTOM NAV (Hash routing) ═══ -->
+  <!-- === BOTTOM NAV (Hash routing) === -->
   <nav class="bottom-nav" aria-label="Main navigation">
     <a href="#home" class="nav-item active" id="nav-home">
       <span class="nav-icon">🏠</span>
@@ -701,18 +701,18 @@
     </a>
   </nav>
 
-  <!-- ═══ FIREBASE CDN (v10 compat — single file, no build) ═══ -->
+  <!-- === FIREBASE CDN (v10 compat — single file, no build) === -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
   <script>
-    /* ═══════════════════════════════════════════════════════════
+    /* ===========================================================
        ServeNow — Single-file PWA
        Sections: Config → Auth → Firestore → Maps → UI Handlers
-       ═══════════════════════════════════════════════════════════ */
+       =========================================================== */
 
-    // ─── PLACEHOLDERS (replace before demo) ───
+    // --- PLACEHOLDERS (replace before demo) ---
     const MAPS_API_KEY = "REPLACE_WITH_YOUR_KEY";
 
     const firebaseConfig = {
@@ -725,7 +725,7 @@
       appId: "YOUR_APP_ID"
     };
 
-    // ─── SERVICE CATALOG ───
+    // --- SERVICE CATALOG ---
     const SERVICES = [
       { id: 's1', name: 'Ironing',        emoji: '👕', time: '30 min',  price: 25  },
       { id: 's2', name: 'Dry Cleaning',   emoji: '✨', time: '24 hrs',  price: 299 },
@@ -737,7 +737,7 @@
       { id: 's8', name: 'Bag & Leather',  emoji: '👜', time: '1-2 days', price: 249 },
     ];
 
-    // ─── SERVICE PROVIDERS (Google Maps markers near Delhi) ───
+    // --- SERVICE PROVIDERS (Google Maps markers near Delhi) ---
     const DELHI_CENTER = { lat: 28.6139, lng: 77.2090 };
     const PROVIDERS = [
       { name: 'Ramesh Tailors', emoji: '✂️', lat: 28.6155, lng: 77.2115, services: 'Ironing · Tailoring' },
@@ -745,7 +745,7 @@
       { name: 'SoleRevive',     emoji: '👟', lat: 28.6148, lng: 77.2050, services: 'Shoe · Bag Repair' },
     ];
 
-    // ─── APP STATE ───
+    // --- APP STATE ---
     let db, auth, currentUser = null;
     let selectedService = null;
     let allOrders = [];
@@ -757,7 +757,7 @@
     let trackMap = null;
     let mapsReady = false;
 
-    // ─── FIREBASE INIT ───
+    // --- FIREBASE INIT ---
     const isMock = firebaseConfig.apiKey.includes("YOUR_API_KEY") || firebaseConfig.apiKey.includes("FakeKey");
     let mockOrders = [];
     if (!isMock) {
@@ -790,7 +790,7 @@
       };
     }
 
-    // ─── AUTH: Google Sign-In ───
+    // --- AUTH: Google Sign-In ---
     function signIn() {
       if(isMock) { auth.signInWithPopup(); return; }
       const provider = new firebase.auth.GoogleAuthProvider();
@@ -825,7 +825,7 @@
 
     document.getElementById('sign-in-btn').addEventListener('click', signIn);
 
-    // ─── FIRESTORE: Real-time orders listener ───
+    // --- FIRESTORE: Real-time orders listener ---
     function fetchOrders() {
       if (!currentUser) {
         renderOrdersEmpty();
@@ -882,7 +882,7 @@
       }
     }
 
-    // ─── ORDERS UI: Live card + History ───
+    // --- ORDERS UI: Live card + History ---
     function renderOrders(orders) {
       var liveContainer = document.getElementById('live-order-container');
       var historyContainer = document.getElementById('history-orders-container');
@@ -974,7 +974,7 @@
       );
     }
 
-    // ─── ETA MICRO-INTERACTION: −1 min every 60 seconds ───
+    // --- ETA MICRO-INTERACTION: −1 min every 60 seconds ---
     function startEtaTimer(orderId, startMinutes) {
       stopEtaTimer();
       var minutes = startMinutes;
@@ -1021,7 +1021,7 @@
       document.getElementById('delivered-popup').classList.remove('open');
     });
 
-    // ─── FIRESTORE: Create booking ───
+    // --- FIRESTORE: Create booking ---
     function openModal(serviceId) {
       if (!currentUser) {
         showToast('Please sign in to book a service', true);
@@ -1089,7 +1089,7 @@
       }
     }
 
-    // ─── FIRESTORE: Reorder (duplicate with new timestamp) ───
+    // --- FIRESTORE: Reorder (duplicate with new timestamp) ---
     async function reorder(orderId) {
       if (!currentUser) return;
       var original = allOrders.find(function (o) { return o.id === orderId; });
@@ -1125,7 +1125,7 @@
       }
     }
 
-    // ─── GOOGLE MAPS: Home map with provider markers ───
+    // --- GOOGLE MAPS: Home map with provider markers ---
     function initHomeMap() {
       if (!window.google || !window.google.maps) {
         showMapFallback();
@@ -1189,7 +1189,7 @@
       }
     }
 
-    // ─── GOOGLE MAPS: Track modal ───
+    // --- GOOGLE MAPS: Track modal ---
     function openTrackModal(order) {
       var provider = PROVIDERS.find(function (p) { return p.name === order.provider; }) || PROVIDERS[0];
       var dest = order.address || 'New Delhi, India';
@@ -1252,7 +1252,7 @@
       trackMap = null;
     }
 
-    // ─── HOME: Service grid + search filter ───
+    // --- HOME: Service grid + search filter ---
     function renderServices(filter) {
       filter = (filter || '').toLowerCase().trim();
       var grid = document.getElementById('service-grid');
@@ -1294,7 +1294,7 @@
       renderServices(e.target.value);
     });
 
-    // ─── UI HELPERS ───
+    // --- UI HELPERS ---
     function showToast(msg, isError) {
       var toast = document.getElementById('toast');
       toast.textContent = msg;
@@ -1316,7 +1316,7 @@
       return new Date(ts).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
     }
 
-    // ─── HASH ROUTER ───
+    // --- HASH ROUTER ---
     function handleRoute() {
       var hash = window.location.hash || '#home';
       document.querySelectorAll('.view').forEach(function (v) { v.classList.remove('active'); });
@@ -1337,7 +1337,7 @@
 
     window.addEventListener('hashchange', handleRoute);
 
-    // ─── MODAL & OVERLAY HANDLERS ───
+    // --- MODAL & OVERLAY HANDLERS ---
     document.getElementById('cancel-booking-btn').addEventListener('click', closeModal);
     document.getElementById('confirm-booking-btn').addEventListener('click', confirmBooking);
     document.getElementById('close-track-btn').addEventListener('click', closeTrackModal);
@@ -1349,7 +1349,7 @@
       if (e.target === e.currentTarget) closeTrackModal();
     });
 
-    // ─── GOOGLE MAPS SCRIPT LOADER ───
+    // --- GOOGLE MAPS SCRIPT LOADER ---
     window.initGoogleMaps = function () {
       initHomeMap();
     };
@@ -1367,7 +1367,7 @@
       document.head.appendChild(script);
     })();
 
-    // ─── BOOT ───
+    // --- BOOT ---
     renderServices();
     handleRoute();
     renderProviderLegend();

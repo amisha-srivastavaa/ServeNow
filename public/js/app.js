@@ -1,10 +1,10 @@
-/* ═══════════════════════════════════════════
+/* ===========================================
    ServeNow — app.js
    Core router, global state, navigation,
    toast, location, cart badge, modals
-   ═══════════════════════════════════════════ */
+   =========================================== */
 
-/* ─── Global State ─── */
+/* --- Global State --- */
 window.App = (function () {
 
   const state = {
@@ -25,11 +25,11 @@ window.App = (function () {
     styleFeed: JSON.parse(JSON.stringify(DATA.styleFeed)),
   };
 
-  /* ─── Page Registry ─── */
+  /* --- Page Registry --- */
   const pages = {};
   function registerPage(id, renderer) { pages[id] = renderer; }
 
-  /* ─── Navigate ─── */
+  /* --- Navigate --- */
   function navigate(page, params = {}) {
     state.page = page;
     state.params = params;
@@ -54,7 +54,7 @@ window.App = (function () {
     if (mc) mc.scrollTop = 0;
   }
 
-  /* ─── Render ─── */
+  /* --- Render --- */
   function render() {
     const mc = document.getElementById('main-content');
     if (!mc) return;
@@ -76,7 +76,7 @@ window.App = (function () {
     updateVoiceFab();
   }
 
-  /* ─── Nav ─── */
+  /* --- Nav --- */
   function updateNav(page) {
     const mainPages = ['home', 'orders', 'ai', 'community', 'profile'];
     document.querySelectorAll('#bottom-nav .nav-item, #senior-nav .senior-nav-item').forEach(el => {
@@ -108,7 +108,7 @@ window.App = (function () {
     if (micTop) micTop.classList.toggle('hidden', !state.seniorMode);
   }
 
-  /* ─── Cart ─── */
+  /* --- Cart --- */
   function addToCart(service, category) {
     const existing = state.cart.find(i => i.serviceId === service.id);
     if (existing) {
@@ -174,7 +174,7 @@ window.App = (function () {
     }
   }
 
-  /* ─── Senior Mode ─── */
+  /* --- Senior Mode --- */
   function setSeniorMode(on) {
     state.seniorMode = on;
     localStorage.setItem('sn_senior', JSON.stringify(on));
@@ -206,7 +206,7 @@ window.App = (function () {
     }
   }
 
-  /* ─── Init ─── */
+  /* --- Init --- */
   function init() {
     // Apply senior mode
     if (state.seniorMode) {
@@ -257,7 +257,7 @@ window.App = (function () {
   };
 })();
 
-/* ─── Cart Drawer ─── */
+/* --- Cart Drawer --- */
 function toggleCart() {
   const drawer = document.getElementById('cart-drawer');
   const overlay = document.getElementById('cart-overlay');
@@ -339,7 +339,7 @@ function renderCartInner() {
     </div>`;
 }
 
-/* ─── Toast ─── */
+/* --- Toast --- */
 function showToast(msg, duration = 2200) {
   const toast = document.getElementById('toast');
   if (!toast) return;
@@ -355,7 +355,7 @@ function showToast(msg, duration = 2200) {
   }, duration);
 }
 
-/* ─── Location Modal ─── */
+/* --- Location Modal --- */
 function showLocationModal() {
   document.getElementById('location-modal').classList.remove('hidden');
   document.getElementById('location-overlay').classList.remove('hidden');
@@ -377,7 +377,7 @@ function selectAddress(addr) {
   showToast('📍 Location updated!');
 }
 
-/* ─── Help Modal ─── */
+/* --- Help Modal --- */
 function showHelpModal() {
   document.getElementById('help-modal').classList.remove('hidden');
   document.getElementById('help-overlay').classList.remove('hidden');
@@ -392,12 +392,12 @@ function simulateCall() {
   setTimeout(() => showToast('✅ Support agent will call you in 2 minutes', 3000), 2000);
 }
 
-/* ─── Notifications ─── */
+/* --- Notifications --- */
 function showNotifToast() {
   showToast('🔔 No new notifications', 2000);
 }
 
-/* ─── Init after ALL scripts load (avoids race with page registration) ─── */
+/* --- Init after ALL scripts load (avoids race with page registration) --- */
 window.addEventListener('load', () => {
   setTimeout(() => App.init(), 0);
 });

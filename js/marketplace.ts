@@ -1,13 +1,12 @@
-// @ts-nocheck
 import { DATA } from './data.ts';
 import { App } from './app.ts';
-/* ═══════════════════════════════════════════
+/* ===========================================
    ServeNow — marketplace.js
    Home, category, service list, checkout flow,
    live tracking, order history, provider dashboard
-   ═══════════════════════════════════════════ */
+   =========================================== */
 
-/* ─── Stars helper ─── */
+/* --- Stars helper --- */
 function stars(rating) {
   const full = Math.floor(rating);
   const half = rating % 1 >= 0.5;
@@ -17,12 +16,12 @@ function stars(rating) {
   return s;
 }
 
-/* ─── Search focus ─── */
+/* --- Search focus --- */
 function focusSearch() {
   showToast('🔍 Search coming soon!');
 }
 
-/* ═══════════════ HOME PAGE ═══════════════ */
+/* =============== HOME PAGE =============== */
 function renderHome(container) {
   const now = new Date();
   const hr = now.getHours();
@@ -141,7 +140,7 @@ function renderHome(container) {
   </div>`;
 }
 
-/* ═══════════════ CATEGORY PAGE ═══════════════ */
+/* =============== CATEGORY PAGE =============== */
 function renderCategory(container, params) {
   const catId = params.id || 'ironing';
   const cat = DATA.categories.find(c => c.id === catId) || DATA.categories[0];
@@ -248,7 +247,7 @@ function renderCategoryAction(svcId, catId) {
   }
 }
 
-/* ═══════════════ CHECKOUT PAGE ═══════════════ */
+/* =============== CHECKOUT PAGE =============== */
 window.checkoutStep = 0;
 window.selectedDate = 0;
 window.selectedSlot = 0;
@@ -483,7 +482,7 @@ async function placeOrder(container) {
   }
 }
 
-/* ═══════════════ TRACKING PAGE ═══════════════ */
+/* =============== TRACKING PAGE =============== */
 function renderTracking(container) {
   const order = App.state.activeOrder || DATA.activeOrder;
   const si = order.statusIndex !== undefined ? order.statusIndex : 1;
@@ -575,7 +574,7 @@ function renderTracking(container) {
   }, 1000);
 }
 
-/* ═══════════════ ORDER HISTORY PAGE ═══════════════ */
+/* =============== ORDER HISTORY PAGE =============== */
 function renderOrders(container) {
   container.innerHTML = `
   <div class="orders-page page-enter">
@@ -640,7 +639,7 @@ function renderOrders(container) {
   </div>`;
 }
 
-/* ═══════════════ PROVIDER DASHBOARD ═══════════════ */
+/* =============== PROVIDER DASHBOARD =============== */
 function renderProvider(container) {
   container.innerHTML = `
   <div class="provider-page page-enter">
@@ -714,7 +713,7 @@ window.addEventListener('load', () => {
   App.registerPage('provider', (c) => renderProvider(c));
 });
 
-/* ─── Global cart helpers accessible from onclick ─── */
+/* --- Global cart helpers accessible from onclick --- */
 function addServiceById(svcId, catId) {
   const svc = Object.values(DATA.services).flat().find(s => s.id === svcId);
   if (!svc) return;
@@ -727,7 +726,7 @@ function removeServiceById(svcId, catId) {
   renderCategoryAction(svcId, catId);
 }
 
-/* ─── History Reorder Clone Flow ─── */
+/* --- History Reorder Clone Flow --- */
 function reorderHistory(orderId) {
   const pastOrder = DATA.orders.find(o => o.id === orderId);
   if (!pastOrder) return;

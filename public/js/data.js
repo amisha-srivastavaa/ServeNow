@@ -1,12 +1,12 @@
-/* ═══════════════════════════════════════════
+/* ===========================================
    ServeNow — data.js
    All mock data: categories, services, orders,
    community posts, style feed, providers
-   ═══════════════════════════════════════════ */
+   =========================================== */
 
 const DATA = {
 
-  /* ─── Service Categories ─── */
+  /* --- Service Categories --- */
   categories: [
     { id: 'ironing',      name: 'Ironing',         emoji: '👕', tagline: '30 min pickup',     color: '#E3F2FD', time: '30 min' },
     { id: 'dry-cleaning', name: 'Dry Cleaning',    emoji: '✨', tagline: 'Expert clean',       color: '#F3E5F5', time: '24 hrs' },
@@ -18,7 +18,7 @@ const DATA = {
     { id: 'watch-repair', name: 'Watch Repair',    emoji: '⌚', tagline: 'Precision craft',    color: '#E8EAF6', time: '1-3 days' },
   ],
 
-  /* ─── Services per category ─── */
+  /* --- Services per category --- */
   services: {
     'ironing': [
       { id: 's-i-1', name: 'Shirt / T-Shirt',       desc: 'Perfectly pressed, collar to cuffs',          price: 25,  orig: 35,  time: '30 min', rating: 4.8, reviews: 1240, emoji: '👔', popular: true },
@@ -75,7 +75,7 @@ const DATA = {
     ],
   },
 
-  /* ─── Past Orders ─── */
+  /* --- Past Orders --- */
   orders: [
     {
       id: 'ORD-8821',
@@ -137,7 +137,7 @@ const DATA = {
     ],
   },
 
-  /* ─── Community Posts ─── */
+  /* --- Community Posts --- */
   communityPosts: [
     {
       id: 'p1',
@@ -213,7 +213,7 @@ const DATA = {
     },
   ],
 
-  /* ─── Style Feed Posts ─── */
+  /* --- Style Feed Posts --- */
   styleFeed: [
     {
       id: 'sf1',
@@ -254,7 +254,7 @@ const DATA = {
     },
   ],
 
-  /* ─── Style Quiz Questions ─── */
+  /* --- Style Quiz Questions --- */
   styleQuiz: [
     {
       question: 'What is your primary style vibe?',
@@ -303,7 +303,7 @@ const DATA = {
     },
   ],
 
-  /* ─── Style Results Map ─── */
+  /* --- Style Results Map --- */
   styleResults: {
     default: {
       label: 'Contemporary Fusion',
@@ -312,7 +312,7 @@ const DATA = {
     },
   },
 
-  /* ─── Mock Measurements ─── */
+  /* --- Mock Measurements --- */
   mockMeasurements: {
     chest: 94,
     waist: 78,
@@ -324,13 +324,13 @@ const DATA = {
     size: 'M',
   },
 
-  /* ─── Addresses ─── */
+  /* --- Addresses --- */
   savedAddresses: [
     { label: 'Home',   icon: '🏠', address: '42, Sector 15, Noida, UP 201301' },
     { label: 'Office', icon: '🏢', address: 'DLF Cyber City, Block B, Gurugram, HR' },
   ],
 
-  /* ─── Provider Orders (Dashboard) ─── */
+  /* --- Provider Orders (Dashboard) --- */
   providerOrders: [
     { id: 'ORD-9901', customer: 'Amisha S.', items: 'Shirt ×5, Trouser ×2 (Ironing)', address: 'Sector 15, Noida', slot: 'Today 2–4 PM', status: 'processing', total: 199 },
     { id: 'ORD-9887', customer: 'Rahul M.', items: 'Wash & Fold 4 kg',               address: 'Sector 18, Noida', slot: 'Today 4–6 PM', status: 'pending',    total: 276 },
