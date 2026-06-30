@@ -1,0 +1,8 @@
+﻿node_modules/
+.git/
+backend/
+src/
+dist/
+.gcloud-sdk/
+*.md
+.vscode/

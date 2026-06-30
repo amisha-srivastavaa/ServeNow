@@ -758,12 +758,41 @@
     let mapsReady = false;
 
     // ─── FIREBASE INIT ───
-    firebase.initializeApp(firebaseConfig);
-    auth = firebase.auth();
-    db = firebase.firestore();
+    const isMock = firebaseConfig.apiKey.includes("YOUR_API_KEY") || firebaseConfig.apiKey.includes("FakeKey");
+    let mockOrders = [];
+    if (!isMock) {
+      firebase.initializeApp(firebaseConfig);
+      auth = firebase.auth();
+      db = firebase.firestore();
+    } else {
+      console.warn("Using Mock Firebase. Replace firebaseConfig to use real Firestore.");
+      auth = {
+        onAuthStateChanged: (cb) => cb(currentUser),
+        signInWithPopup: async () => { 
+            currentUser = { uid: "user123", displayName: "Hackathon Judge", photoURL: "https://ui-avatars.com/api/?name=Judge" }; 
+            if(auth.onAuthStateChangedCb) auth.onAuthStateChangedCb(currentUser); 
+        },
+        onAuthStateChangedCb: null
+      };
+      auth.onAuthStateChanged = (cb) => { auth.onAuthStateChangedCb = cb; cb(currentUser); };
+      
+      // Mock Firestore
+      db = {
+        collection: (name) => ({
+          where: () => ({
+            onSnapshot: (cb, errCb) => {
+              window.onMockDataChanged = () => cb({ docs: mockOrders.map(data => ({ id: data.id, data: () => data })) });
+              window.onMockDataChanged();
+              return () => {}; // unsubscribe
+            }
+          })
+        })
+      };
+    }
 
     // ─── AUTH: Google Sign-In ───
     function signIn() {
+      if(isMock) { auth.signInWithPopup(); return; }
       const provider = new firebase.auth.GoogleAuthProvider();
       auth.signInWithPopup(provider).catch(function (err) {
         console.error('Sign-in error:', err);

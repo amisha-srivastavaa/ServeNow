@@ -317,7 +317,8 @@ async function quizNext() {
     if (content) content.innerHTML = `<div class="smartfit-section" style="text-align:center;padding:40px;"><h3>Analysing your style...</h3></div>`;
 
     try {
-      const response = await fetch('http://localhost:8000/api/ai/style', {
+      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+      const response = await fetch(`${apiUrl}/api/ai/style`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
